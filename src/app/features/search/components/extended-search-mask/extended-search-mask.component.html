@@ -1,0 +1,220 @@
+<div *ngIf='isBigScreen()'>
+  <p class='line-header'>{{ 'search.name-search.title' | translate }}</p>
+  <form [formGroup]='form' (keydown.enter)='handleEnter($event)'>
+    <div class='form-line'>
+      <bc-text
+        [label]="'search.name-search.name' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='1'
+        [focusOnLoad]='true'
+        [formControlName]="'name'"
+      ></bc-text>
+      <bc-text
+        [label]="'search.name-search.first-name' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='2'
+        [formControlName]="'firstName'"
+      ></bc-text>
+      <bc-text
+        [label]="'search.name-search.alliance-name' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='3'
+        [formControlName]="'allianceName'"
+      ></bc-text>
+      <bc-date
+        [label]="'search.name-search.date-of-birth' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='4'
+        [formControlName]="'dateOfBirth'"
+      ></bc-date>
+      <bc-button
+        [label]="'search.buttons.search' | translate"
+        [variant]="'primary'"
+        [tabIndex]='12'
+        [disabled]='!this.form.valid'
+        (buttonClick)='search()'
+      ></bc-button>
+      <bc-button
+        class='width-fix'
+        [variant]="'tertiary'"
+        [label]="'search.buttons.clear-filter' | translate"
+        (buttonClick)='clearSearch()'
+      ></bc-button>
+      <div class='flex-expander'></div>
+    </div>
+    <p class='line-header'>{{ 'search.address-search.title' | translate }}</p>
+    <div class='form-line'>
+      <bc-text
+        [label]="'search.address-search.street' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='5'
+        [formControlName]="'street'"
+      ></bc-text>
+      <bc-text
+        [label]="'search.address-search.house-number' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='6'
+        [formControlName]="'houseNumber'"
+      ></bc-text>
+      <bc-number
+        [label]="'search.address-search.zip-code' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='7'
+        [formControlName]="'zipCode'"
+      ></bc-number>
+      <bc-text
+        [label]="'search.address-search.town' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='8'
+        [formControlName]="'town'"
+      ></bc-text>
+      <bc-dropdown
+        [items]='(visibleOrganisations | async) ?? []'
+        [clearable]='true'
+        [valueExpr]="'organisationCode'"
+        [displayExpr]="'organisationName'"
+        [label]="'search.address-search.reporting-municipality' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='9'
+        [formControlName]="'reportingMunicipality'"
+      ></bc-dropdown>
+    </div>
+    <p class='line-header'>{{ 'search.id-search.title' | translate }}</p>
+    <div class='form-line'>
+      <bc-masked
+        [label]="'search.id-search.vn' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [maskOptions]='vnMask'
+        [tabIndex]='10'
+        [formControlName]="'vn'"
+      ></bc-masked>
+      <bc-number
+        [label]="'search.id-search.other-ids' | translate"
+        [appearance]="'outline'"
+        [width]="'300px'"
+        [tabIndex]='11'
+        [formControlName]="'id'"
+      ></bc-number>
+    </div>
+  </form>
+</div>
+
+<div *ngIf='isSmallOrMediumScreen()'>
+  <form [formGroup]='form' (keydown.enter)='handleEnter($event)'>
+    <div class='flex-row'>
+      <bc-button
+        [label]="'search.buttons.search' | translate"
+        [variant]="'primary'"
+        [tabIndex]='12'
+        [disabled]='!this.form.valid'
+        (buttonClick)='search()'
+      ></bc-button>
+      <bc-button
+        class='width-fix'
+        [variant]="'tertiary'"
+        [label]="'search.buttons.clear-filter' | translate"
+        (buttonClick)='clearSearch()'
+      ></bc-button>
+      <div class='flex-expander'></div>
+    </div>
+
+    <div class='search-container'>
+      <bc-text
+        class='search-element'
+        [label]="'search.name-search.name' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='1'
+        [focusOnLoad]='true'
+        [formControlName]="'name'"
+      ></bc-text>
+      <bc-text
+        class='search-element'
+        [label]="'search.name-search.alliance-name' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='3'
+        [formControlName]="'allianceName'"
+      ></bc-text>
+      <bc-text
+        class='search-element'
+        [label]="'search.name-search.first-name' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='2'
+        [formControlName]="'firstName'"
+      ></bc-text>
+      <bc-date
+        [label]="'search.name-search.date-of-birth' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='4'
+        [formControlName]="'dateOfBirth'"
+      ></bc-date>
+
+    </div>
+
+    <div class='search-container'>
+      <bc-text
+        [label]="'search.address-search.street' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='5'
+        [formControlName]="'street'"
+      ></bc-text>
+
+      <bc-number
+        [label]="'search.address-search.zip-code' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='7'
+        [formControlName]="'zipCode'"
+      ></bc-number>
+      <bc-text
+        [label]="'search.address-search.house-number' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='6'
+        [formControlName]="'houseNumber'"
+      ></bc-text>
+      <bc-text
+        [label]="'search.address-search.town' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='8'
+        [formControlName]="'town'"
+      ></bc-text>
+      <div class='flex-expander'></div>
+      <bc-dropdown
+        [items]='(visibleOrganisations | async) ?? []'
+        [clearable]='true'
+        [valueExpr]="'organisationCode'"
+        [displayExpr]="'organisationName'"
+        [label]="'search.address-search.reporting-municipality' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='9'
+        [formControlName]="'reportingMunicipality'"
+      ></bc-dropdown>
+    </div>
+
+    <div class='search-container'>
+      <bc-masked
+        [label]="'search.id-search.vn' | translate"
+        [appearance]="'outline'"
+        [maskOptions]='vnMask'
+        [tabIndex]='10'
+        [formControlName]="'vn'"
+      ></bc-masked>
+      <div class='flex-expander'></div>
+      <bc-number
+        [label]="'search.id-search.other-ids' | translate"
+        [appearance]="'outline'"
+        [tabIndex]='11'
+        [formControlName]="'id'"
+      ></bc-number>
+    </div>
+  </form>
+</div>
+

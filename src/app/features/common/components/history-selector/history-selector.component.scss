@@ -1,0 +1,25 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+}
+
+.line-header {
+  font-weight: bolder;
+  font-size: 110%;
+}
+
+.line-detail {
+  font-size: 85%;
+  white-space: normal;
+  margin: 0;
+}
+
+.radio-group {
+  margin-top: 20px;
+}
+
+.button-container {
+  text-align: right;
+}

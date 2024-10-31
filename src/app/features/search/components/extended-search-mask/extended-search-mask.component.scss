@@ -1,0 +1,63 @@
+.options-line {
+  display: flex;
+  flex-direction: row;
+  gap: 3em;
+  align-items: center;
+}
+
+.align-self-start {
+  align-self: flex-start;
+}
+
+.element-margin-top {
+  margin-top: 1em;
+}
+
+.form-line {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: center;
+}
+
+.form-line-small {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5em;
+  max-width: 95%;
+}
+
+.search-container {
+  column-count: 2;
+  column-span: all;
+  gap: 0.5em;
+}
+
+.line-header {
+  font-weight: bolder;
+  font-size: 110%;
+}
+
+.flex-expander {
+  flex-grow: 2;
+}
+
+.width-fix {
+  min-width: 200px;
+}
+
+.search-element {
+  row-gap: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px
+}
+
+
+
+

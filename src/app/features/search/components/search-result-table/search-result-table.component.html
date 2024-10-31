@@ -1,0 +1,50 @@
+<div class='table-header'>
+  <p class="line-header">{{ 'search.search-table.found-title' | translate }} {{ dataSource.data.length }}</p>
+  <bc-button *ngIf='searchExportAllowed' [icon]="'download'" [variant]="'tertiary'" [label]="'search.search-table.export-button' | translate" (buttonClick)='downloadFile()'></bc-button>
+</div>
+<bc-table sort [dataSource]="dataSource" [sortMultiple]="false" [fixed]="false">
+  <ng-container *ngFor="let column of columnsToDisplay" [columnDef]="column">
+    <bc-header-cell class="guardianship-table-header-cell" sort *headerCellDef
+      >{{ 'search.search-table.column-title.' + column | translate }}
+    </bc-header-cell>
+    <bc-data-cell *dataCellDef="let row" class='{{ row[columns.PERSON_STATUS] }}'>
+      <div [ngSwitch]="column">
+        <div *ngSwitchCase="columns.DATA_LOCK_ICON">
+          <bc-icon *ngIf="row[columns.DATA_LOCK_ICON]" icon="{{ row[columns.DATA_LOCK_ICON] }}" iconColor="none"></bc-icon>
+        </div>
+        <div *ngSwitchCase="columns.SEX_ICON">
+          <bc-icon *ngIf="row[columns.SEX_ICON]" icon="{{ row[columns.SEX_ICON] }}" iconColor="none"></bc-icon>
+        </div>
+        <div *ngSwitchCase="columns.RESIDENCES">
+          <div class="residences-container" *ngIf="row[columns.RESIDENCES]">
+            <div class="residence-wrapper" *ngFor="let residence of row[columns.RESIDENCES]">
+              <div class="residence-wrapper" [ngSwitch]="residence">
+                <div class="residence-wrapper" *ngSwitchCase="'1'">
+                  <bc-status-label
+                    label="{{ 'search.search-table.residence-short.mainResidenceShort' | translate }}"
+                    [backgroundColor]="'#e8f0fa'" [foregroundColor] = "formatInactiveResidences(row[columns.PERSON_STATUS])">
+                  </bc-status-label>
+                </div>
+                <div class="residence-wrapper" *ngSwitchCase="'2'">
+                  <bc-status-label
+                    label="{{ 'search.search-table.residence-short.secondaryResidenceShort' | translate }}"
+                    [backgroundColor]="'#fff1cc'" [foregroundColor] = "formatInactiveResidences(row[columns.PERSON_STATUS])">
+                  </bc-status-label>
+                </div>
+                <div class="residence-wrapper" *ngSwitchCase="'3'">
+                  <bc-status-label
+                    label="{{ 'search.search-table.residence-short.otherResidenceShort' | translate }}"
+                    [backgroundColor]="'#e9e9e9'" [foregroundColor] = "formatInactiveResidences(row[columns.PERSON_STATUS])">
+                  </bc-status-label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngSwitchDefault>{{ row[column] }}</div>
+      </div>
+    </bc-data-cell>
+  </ng-container>
+  <bc-header-row *headerRowDef="let row; columns: columnsToDisplay"></bc-header-row>
+  <bc-data-row *dataRowDef="let row; columns: columnsToDisplay" (click)="onDetailClicked(row)"></bc-data-row>
+</bc-table>

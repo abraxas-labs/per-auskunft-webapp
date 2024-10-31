@@ -1,0 +1,230 @@
+<mat-toolbar [ngClass]="{'header-container': isBigScreen(), 'header-container-small': isSmallOrMediumScreen()}">
+  <div class='header-label'>{{ headerLabel }}</div>
+  <div [ngSwitch]='personStatus()'>
+    <div *ngSwitchCase='"inactive"'>
+      <div class='status-container'>
+        <bc-icon icon='remove' class='inactive-icon'></bc-icon>
+        <bc-status-label class='status-label' label='{{ personStatusTitle() }}'></bc-status-label>
+      </div>
+    </div>
+    <div *ngSwitchCase='"locked"'>
+      <div class='status-container'>
+        <bc-icon icon='lock' class='locked-icon'></bc-icon>
+        <bc-status-label class='status-label' label='{{ personStatusTitle() }}'></bc-status-label>
+      </div>
+    </div>
+    <div *ngSwitchCase='"active"'>
+      <div class='status-container'></div>
+    </div>
+  </div>
+  <div [ngClass]="{'date-button-container': isBigScreen(), 'date-button-container-small': isSmallOrMediumScreen()}">
+    <bc-button class='date-button'
+               [label]=getHistoryLabel()
+               [icon]="'calendar'"
+               [variant]="'tertiary'"
+               [color]="'primary'"
+               (buttonClick)='openHistorySelector()'
+    ></bc-button>
+  </div>
+</mat-toolbar>
+
+<div [ngClass]="{'container': isBigScreen(), 'container-small': isSmallOrMediumScreen()}">
+  <div class='info-box'>
+    <bc-skeleton [loading]='isLoading' [applyMinHeightToContent]='true' [height]="'300px'" [radius]="'0px'">
+      <div *ngIf='person' class='info-box-inner'>
+        <p class='info-box-title'>{{ 'person-detail.titles.names' | translate }}</p>
+        <div class='info-box-grid'>
+          <p class='info-box-label'>{{ 'person-detail.labels.officialName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.officialName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.firstName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.firstName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.callName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.callName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.allianceName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.allianceName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.nameOnForeignPassport' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.nameOnForeignPassport | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.originalName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.originalName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.otherName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.otherName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.aliasName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.aliasName | masked }}</p>
+        </div>
+      </div>
+    </bc-skeleton>
+  </div>
+
+  <div class='info-box'>
+    <bc-skeleton [loading]='isLoading' [applyMinHeightToContent]='true' [height]="'300px'" [radius]="'0px'">
+      <div *ngIf='person' class='info-box-inner'>
+        <p class='info-box-title'>{{ 'person-detail.titles.characteristics' | translate }}</p>
+        <div class='info-box-grid'>
+          <p class='info-box-label'>{{ 'person-detail.labels.status' | translate }}</p>
+          <p class='info-box-value'>{{ formatPersonStatus(person.personStatus) }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.sex' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.sexCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.ahvn13' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.vn | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.dateOfBirth' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.dateOfBirth | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.placeOfBirth' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.placeOfBirth.place | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.countryOfBirth' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.placeOfBirth.country | masked }}</p>
+          <ng-container *ngFor='let place of person.person.placesOfOrigin'>
+            <p class='info-box-label'>{{ 'person-detail.labels.placeOfOriginName' | translate }}</p>
+            <p class='info-box-value'>{{ place.name | masked }}</p>
+            <p class='info-box-label'>{{ 'person-detail.labels.naturalizationDate' | translate }}</p>
+            <p class='info-box-value'>{{ place.naturalizationDate | masked }}</p>
+          </ng-container>
+          <p class='info-box-label'>{{ 'person-detail.labels.religion' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.religionData.religionCode | masked }}</p>
+        </div>
+      </div>
+    </bc-skeleton>
+  </div>
+
+  <div class='info-box'>
+    <bc-skeleton [loading]='isLoading' [applyMinHeightToContent]='true' [height]="'300px'" [radius]="'0px'">
+      <div *ngIf='person' class='info-box-inner'>
+        <p class='info-box-title'>{{ 'person-detail.titles.nationality' | translate }}</p>
+        <div class='info-box-grid'>
+          <p class='info-box-label'>{{ 'person-detail.labels.entryDate' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.residencePermitData.entryDate | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.residencePermitCode' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.residencePermitData.residencePermitCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.residencePermitValidTill' | translate }}</p>
+          <p class='info-box-value'>
+            {{ person.person.residencePermitData.residencePermitValidTill | masked }}
+          </p>
+          <p class='info-box-label'>{{ 'person-detail.labels.countryOfNationality' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nationalityData.country.countryNameShort | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.nationalityStatus' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nationalityData.nationalityStatusCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.municipality' | translate }}</p>
+          <p
+            class='info-box-value'>{{ person.residenceInformationView.reportingOrganisationNameAndCanton | masked }}</p>
+        </div>
+      </div>
+    </bc-skeleton>
+  </div>
+
+  <div class='info-box'>
+    <bc-skeleton [loading]='isLoading' [applyMinHeightToContent]='true' [height]="'150px'" [radius]="'0px'">
+      <div *ngIf='person' class='info-box-inner'>
+        <p class='info-box-title'>{{ 'person-detail.titles.maritalInfo' | translate }}</p>
+        <div class='info-box-grid'>
+          <p class='info-box-label'>{{ 'person-detail.labels.maritalInfo' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.maritalStatusCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.dateOfMartialStatus' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.dateOfMaritalStatus | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.separation' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.separationCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.separationValidFrom' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.separationValidFrom | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.cancellationReasonCode' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.cancellationReasonCode | masked }}</p>
+        </div>
+      </div>
+    </bc-skeleton>
+  </div>
+
+  <div class='info-box'>
+    <bc-skeleton [loading]='isLoading' [applyMinHeightToContent]='true' [height]="'150px'" [radius]="'0px'">
+      <div *ngIf='person' class='info-box-inner'>
+        <p class='info-box-title'>{{ 'person-detail.titles.parents' | translate }}</p>
+        <div class='info-box-grid'>
+          <p class='info-box-label'>{{ 'person-detail.labels.nameParent1' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.nameOfFather | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.nameParent2' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.nameOfMother | masked }}</p>
+        </div>
+      </div>
+    </bc-skeleton>
+  </div>
+
+  <div class='info-box'>
+    <bc-skeleton [loading]='isLoading' [applyMinHeightToContent]='true' [height]="'150px'" [radius]="'0px'">
+      <div *ngIf='person' class='info-box-inner'>
+        <p class='info-box-title'>{{ 'person-detail.titles.additionalData' | translate }}</p>
+        <div class='info-box-grid'>
+          <p class='info-box-label'>{{ 'person-detail.labels.dateOfDeath' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.additionalData.dateOfDeath | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.dateOfMissing' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.additionalData.dateOfMissing | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.languageOfCorrespondence' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.additionalData.languageOfCorrespondence | masked }}</p>
+          <p class='info-box-label'>
+            {{ 'person-detail.labels.restrictedVotingAndElectionRightFederation' | translate }}
+          </p>
+          <p class='info-box-value'>
+            {{ person.person.additionalData.restrictedVotingAndElectionRightFederation | masked }}
+          </p>
+          <p class='info-box-label'>{{ 'person-detail.labels.lock' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.additionalData.lock | masked }}</p>
+        </div>
+      </div>
+    </bc-skeleton>
+  </div>
+</div>
+
+<div *ngIf='person'>
+  <div [ngClass]="{'expansion-box': isBigScreen(), 'expansion-box-small': isSmallOrMediumScreen()}">
+    <bc-expansion-panel [expanded]='true'>
+      <ng-container header>
+        <p class='expansion-box-title'>{{ 'person-detail.titles.residences' | translate }}</p>
+      </ng-container>
+      <div *ngIf='person'>
+        <app-residences-table [person]='person.person'></app-residences-table>
+      </div>
+    </bc-expansion-panel>
+  </div>
+
+  <div [ngClass]="{'expansion-box': isBigScreen(), 'expansion-box-small': isSmallOrMediumScreen()}">
+    <bc-expansion-panel [expanded]='true'>
+      <ng-container header>
+        <p class='expansion-box-title'>{{ 'person-detail.titles.family' | translate }}</p>
+      </ng-container>
+      <div *ngIf='person'>
+        <app-family-table [familyRelations]='person.person.familyRelations'></app-family-table>
+      </div>
+    </bc-expansion-panel>
+  </div>
+
+  <div [ngClass]="{'expansion-box': isBigScreen(), 'expansion-box-small': isSmallOrMediumScreen()}">
+    <bc-expansion-panel [expanded]='true'>
+      <ng-container header>
+        <p class='expansion-box-title'>{{ 'person-detail.titles.relations' | translate }}</p>
+      </ng-container>
+      <div *ngIf='person'>
+        <app-guardianship-table [person]='person'></app-guardianship-table>
+      </div>
+    </bc-expansion-panel>
+  </div>
+
+  <div [ngClass]="{'expansion-box': isBigScreen(), 'expansion-box-small': isSmallOrMediumScreen()}">
+    <bc-expansion-panel [expanded]='true'>
+      <ng-container header>
+        <p class='expansion-box-title'>{{ 'person-detail.titles.household-mainResidence' | translate }}</p>
+      </ng-container>
+      <div *ngIf='person'>
+        <app-household-table [person]='person.mainAndOtherResidenceHouseholdMembers'></app-household-table>
+      </div>
+    </bc-expansion-panel>
+  </div>
+
+  <div [ngClass]="{'expansion-box': isBigScreen(), 'expansion-box-small': isSmallOrMediumScreen()}">
+    <bc-expansion-panel [expanded]='true'>
+      <ng-container header>
+        <p class='expansion-box-title'>
+          {{ 'person-detail.titles.household-secondaryResidences' | translate }}
+        </p>
+      </ng-container>
+      <div *ngIf='person'>
+        <app-household-table [person]='person.secondaryResidenceHouseholdMembers'></app-household-table>
+      </div>
+    </bc-expansion-panel>
+  </div>
+
+</div>

@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+
+@use 'sass:map';
+@use 'sass:color';
+@use '@abraxas/base-components/src/lib/styles/predefined/default.palette' as palette;
+
+$core: map.get(palette.$default-palette, "core");
+$primary: map.get($core, "primary");
+$primary10: color.mix($primary, white, 10%);
+
+body {
+  min-height: 100vh;
+  background-color: rgba($primary10, 0.4);
+}

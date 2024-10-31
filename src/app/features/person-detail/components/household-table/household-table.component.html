@@ -1,0 +1,28 @@
+<bc-table sort [dataSource]="dataSource" [sortMultiple]="false" [fixed]="false">
+  <ng-container *ngFor="let column of columns" [columnDef]="column.expression">
+
+  <bc-header-cell class="household-table-header-cell" sort *headerCellDef>{{ column.title }}
+  </bc-header-cell>
+    <bc-data-cell *dataCellDef="let row">
+      <div [ngSwitch]="column.expression">
+        <div *ngSwitchCase="TableColumnIds.DATA_LOCK_ICON">
+          <bc-icon *ngIf="row['dataLockIcon']" icon="{{ row['dataLockIcon'] }}" iconColor="none"></bc-icon>
+        </div>
+        <div *ngSwitchCase="TableColumnIds.SEX_CODE">
+          <bc-icon *ngIf="row['sexIcon']" icon="{{ row['sexIcon'] }}" iconColor="none"></bc-icon>
+        </div>
+        <div *ngSwitchCase="TableColumnIds.PER_ID">
+          <bc-button
+            *ngIf="row[TableColumnIds.PER_ID]"
+            icon="external-link"
+            variant="tertiary"
+            (buttonClick)="onDetailClicked(row)"
+          ></bc-button>
+        </div>
+        <div *ngSwitchDefault>{{ row[column.expression] }}</div>
+      </div>
+    </bc-data-cell>
+  </ng-container>
+  <bc-header-row *headerRowDef="let row; columns: columnsToDisplay"></bc-header-row>
+  <bc-data-row *dataRowDef="let row; columns: columnsToDisplay"></bc-data-row>
+</bc-table>

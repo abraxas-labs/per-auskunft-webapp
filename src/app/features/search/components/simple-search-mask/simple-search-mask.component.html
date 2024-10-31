@@ -1,0 +1,28 @@
+<p class='line-header'>{{ 'search.simple-search.title' | translate }}</p>
+<form [formGroup]='form' (keydown.enter)='handleEnter($event)'>
+  <div [ngClass]="{'form-line': isBigOrMediumScreen(), 'form-line-small': isSmallScreen()}">
+    <bc-search
+      [placeholder]="'search.simple-search.searchField' | translate"
+      [focusOnLoad]='true'
+      [matDivider]='false'
+      [formControlName]="'simpleSearch'"
+      (searchClick)='handleSearch()'
+    ></bc-search>
+    <div class='flex-expander'></div>
+    <div [ngClass]="{'form-line': isBigOrMediumScreen(), 'flex-row': isSmallScreen()}">
+      <bc-button
+        [label]="'search.buttons.search' | translate"
+        [variant]="'primary'"
+        [tabIndex]='12'
+        [disabled]='!this.form.valid'
+        (buttonClick)='handleSearch()'
+      ></bc-button>
+      <bc-button
+        class='width-fix'
+        [variant]="'tertiary'"
+        [label]="'search.buttons.clear-filter' | translate"
+        (buttonClick)='clearSearch()'
+      ></bc-button>
+    </div>
+  </div>
+</form>

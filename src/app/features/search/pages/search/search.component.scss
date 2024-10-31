@@ -1,0 +1,57 @@
+.search-container {
+  margin: 2em;
+}
+
+.search-container-small {
+  margin: 0.5em;
+}
+
+.options-line {
+  display: flex;
+  flex-direction: row;
+  gap: 3em;
+  align-items: baseline;
+}
+
+.options-line-small {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+}
+
+.control-group-width {
+  width: auto;
+}
+
+.align-self-start {
+  align-self: flex-start;
+}
+
+.element-margin-top {
+  margin-top: 1em;
+}
+
+.element-margin-top-check {
+  margin-top: 1.4em;
+}
+
+.flex-expander {
+  flex-grow: 2;
+}
+
+.line-header {
+  margin-top: 1em;
+  font-weight: bolder;
+  font-size: 110%;
+}
+
+.history-selector {
+  padding-left: 0px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  max-width: 65%;
+  margin: 10px;
+}

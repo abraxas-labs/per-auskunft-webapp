@@ -1,0 +1,34 @@
+<bc-app-header-bar-iam
+  link='/'
+  logo='PER'
+  title='PER Auskunft'
+  [showAppDrawer]='false'
+  [tenants]='userTenants'
+  [tenant]='activeTenant'
+></bc-app-header-bar-iam>
+<div *ngIf='getAuth(); else permissionDenied'>
+  <bc-alert-container></bc-alert-container>
+  <router-outlet></router-outlet>
+</div>
+<ng-template #permissionDenied>
+  <div *ngIf="getAuthDone()">
+    <div class='auth-container'>
+      <h2>{{'no-permission-panel.title' | translate}}</h2>
+      <bc-alert-bar
+        message="{{'no-permission-panel.errorMessage' | translate}}"
+        [color]="'error'"
+        [displayDismissAction]='false'>
+      </bc-alert-bar>
+      <div>{{'no-permission-panel.descriptiveMessage' | translate}}
+      </div>
+      <bc-button class='button-container'
+                 [color]="'warn'"
+                 label="{{'no-permission-panel.signInWithOtherAccount' | translate}}"
+                 [variant]="'primary'"
+                 (buttonClick)='changeAccount()'>
+      </bc-button>
+    </div>
+  </div>
+</ng-template>
+
+

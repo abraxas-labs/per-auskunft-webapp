@@ -1,0 +1,34 @@
+@use 'sass:map';
+@use 'sass:color';
+@use '@abraxas/base-components/src/lib/styles/predefined/default.palette' as palette;
+
+$signal: map.get(palette.$default-palette, "signal");
+$locked: map.get($signal, "error");
+$locked10: color.mix($locked, white, 60%);
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.line-header {
+  margin-top: 1em;
+  font-weight: bolder;
+  font-size: 110%;
+}
+
+.residence-wrapper {
+  width: 50px;
+}
+
+.residences-container {
+  display: flex;
+}
+
+.inactive {
+  color: darkgrey;
+}
+
+.locked {
+  color: $locked10;
+}

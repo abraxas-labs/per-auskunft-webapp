@@ -1,0 +1,65 @@
+<bc-table sort [dataSource]='dataSource' [sortMultiple]='false' [fixed]='false'
+          [sortActive]="[{id: TableColumnIds.ARRIVAL_DATE, direction: 'desc'}]">
+  <ng-container *ngFor='let column of columns' [columnDef]='column.expression'>
+    <bc-header-cell sort *headerCellDef>{{ column.title }}</bc-header-cell>
+    <bc-data-cell class='residence-container' *dataCellDef='let row'>
+      <div [ngSwitch]='column.expression'>
+        <div *ngSwitchCase='TableColumnIds.RESIDENCE_CODE'>
+          <div [ngSwitch]='row[TableColumnIds.RESIDENCE_CODE]'>
+            <div *ngSwitchCase="'1'">
+              <bc-status-label
+                label="{{ 'search.search-table.residence-short.mainResidenceShort' | translate }}"
+                [backgroundColor]="'#e8f0fa'">
+              </bc-status-label>
+            </div>
+            <div *ngSwitchCase="'2'">
+              <bc-status-label
+                label="{{ 'search.search-table.residence-short.secondaryResidenceShort' | translate }}"
+                [backgroundColor]="'#fff1cc'">
+              </bc-status-label>
+            </div>
+            <div *ngSwitchCase="'3'">
+              <bc-status-label
+                label="{{ 'search.search-table.residence-short.otherResidenceShort' | translate }}"
+                [backgroundColor]="'#e9e9e9'">
+              </bc-status-label>
+            </div>
+          </div>
+        </div>
+        <div *ngSwitchCase='TableColumnIds.ARRIVAL_DATE'>
+          <p>{{postFormatDate(row[TableColumnIds.ARRIVAL_DATE])}}</p>
+        </div>
+        <div *ngSwitchCase='TableColumnIds.MOVING_DATE'>
+          <p>{{postFormatDate(row[TableColumnIds.MOVING_DATE])}}</p>
+        </div>
+        <div *ngSwitchCase='TableColumnIds.DEPARTURE_DATE'>
+          <p>{{postFormatDate(row[TableColumnIds.DEPARTURE_DATE])}}</p>
+        </div>
+        <div *ngSwitchCase='TableColumnIds.DOMICILE_DATA'>
+          <div class='residence-wrapper' *ngFor='let domicileData of row[TableColumnIds.DOMICILE_DATA]'>
+            <p class='multiLineValue'>{{domicileData}}</p>
+          </div>
+        </div>
+        <div *ngSwitchCase='TableColumnIds.ADDRESS'>
+          <div class='residence-wrapper' *ngFor='let addressData of row[TableColumnIds.ADDRESS]'>
+            <p class='multiLineValue'>{{addressData}}</p>
+          </div>
+        </div>
+        <div *ngSwitchCase='TableColumnIds.GOES_TO_ADDRESS'>
+          <div class='residence-wrapper' *ngFor='let addressData of row[TableColumnIds.GOES_TO_ADDRESS]'>
+            <p class='multiLineValue'>{{addressData}}</p>
+          </div>
+        </div>
+        <div *ngSwitchDefault>{{ row[column.expression] }}</div>
+      </div>
+    </bc-data-cell>
+  </ng-container>
+  <bc-header-row *headerRowDef='let row; columns: columnsToDisplay'></bc-header-row>
+  <bc-data-row *dataRowDef='let row; columns: columnsToDisplay'></bc-data-row>
+</bc-table>
+<div *ngIf='noResidences;then noContent'></div>
+<ng-template #noContent>
+  <div class='residences-not-found'>
+    <h5>{{'general.masked' | translate}}</h5>
+  </div>
+</ng-template>

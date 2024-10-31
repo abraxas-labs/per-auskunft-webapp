@@ -1,0 +1,34 @@
+.form-line {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: baseline;
+  min-width: 50%;
+  //max-width: 65%;
+}
+
+.form-line-small {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  max-width: 98%;
+}
+
+.line-header {
+  font-weight: bolder;
+  font-size: 110%;
+}
+
+.flex-expander {
+  flex-grow: 2;
+}
+
+.width-fix {
+  min-width: 200px;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px
+}

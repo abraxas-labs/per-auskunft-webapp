@@ -1,0 +1,392 @@
+{
+  "person-detail": {
+    "titles": {
+      "names": "Namen",
+      "characteristics": "Merkmale",
+      "nationality": "Heimat / Bewilligung",
+      "maritalInfo": "Zivilstand",
+      "parents": "Eltern",
+      "additionalData": "Zusatzdaten",
+      "relations": "Beistandschaften",
+      "household-mainResidence": "Haushalt Wohnadresse",
+      "household-secondaryResidences": "Haushalt Nebenwohnsitz",
+      "residences": "Meldeverhältnis",
+      "family": "Familie",
+      "general": "Allgemeine Personenangaben"
+    },
+    "labels": {
+      "officialName": "Name",
+      "firstName": "Vornamen",
+      "callName": "Rufnamen",
+      "allianceName": "Allianzname",
+      "nameOnForeignPassport": "Name Pass",
+      "originalName": "Lediger Name",
+      "otherName": "Anderer Name",
+      "aliasName": "Alias Name",
+      "status": "Status",
+      "sex": "Geschlecht",
+      "ahvn13": "AHVN13",
+      "dateOfBirth": "Geburtsdatum",
+      "placeOfBirth": "Geburtsort",
+      "countryOfBirth": "Geburtsland",
+      "placeOfOriginName": "Heimatort",
+      "naturalizationDate": "Bürgerrecht gültig ab",
+      "religion": "Konfession",
+      "entryDate": "Einreisedatum",
+      "residencePermitCode": "Ausländerkategorie",
+      "residencePermitValidTill": "Gültig bis",
+      "countryOfNationality": "Staatsangehörigkeit",
+      "nationalityStatus": "Staatsang. Status",
+      "municipality": "Meldegemeinde",
+      "maritalInfo": "Zivilstand",
+      "dateOfMartialStatus": "Zivilstandsdatum",
+      "separation": "Trennung",
+      "separationValidFrom": "Trennungsdatum",
+      "cancellationReasonCode": "Auflösungsgrund",
+      "nameParent1": "Name Elternteil 1",
+      "nameParent2": "Name Elternteil 2",
+      "dateOfDeath": "Todesdatum",
+      "dateOfMissing": "Verschollendatum",
+      "languageOfCorrespondence": "Korrespondenz",
+      "restrictedVotingAndElectionRightFederation": "Stimmverzicht",
+      "lock": "Sperre",
+      "relationMissing": "Fehler, Beziehungspartner unbekannt"
+    },
+    "columnsFamilyRelations": {
+      "dataLockIcon": "Sperre",
+      "sexCode": "m/w",
+      "typeOfRelationship": "Rolle",
+      "officialName": "Name",
+      "firstName": "Vornamen",
+      "allianceName": "Allianzname",
+      "originalName": "Ledigname",
+      "aliasName": "Aliasname",
+      "dateOfBirth": "Geburtsdatum",
+      "maritalStatus": "Zivilstand",
+      "nationality": "Staatsangehörigkeit",
+      "address": "Wohnadresse",
+      "contactAddress": "Zustelladresse",
+      "care": "Sorgerecht",
+      "perId": "Detail"
+    },
+    "columnsGuardianship": {
+      "dataLockIcon": "Sperre",
+      "sexCode": "m/w",
+      "typeOfRelationshipCode": "Rolle",
+      "name": "Name",
+      "firstname": "Vornamen",
+      "address": "Adressdaten",
+      "perId": "Detail"
+    },
+    "columnsHousehold": {
+      "dataLockIcon": "Sperre",
+      "sexCode": "m/w",
+      "name": "Name",
+      "firstName": "Vornamen",
+      "officialName": "Name",
+      "allianceName": "Allianzname",
+      "aliasName": "Aliasname",
+      "dateOfBirth": "Geburtsdatum",
+      "egId": "EGID",
+      "ewId": "EWID",
+      "typeOfHousehold": "Haushaltsart",
+      "perId": "Detail"
+    },
+    "columnsResidences": {
+      "residenceCode": "Art",
+      "arrivalDate": "Zuzugsdatum",
+      "movingDate": "Umzugsdatum",
+      "departureDate": "Wegzugsdatum",
+      "municipalityWithCantonAbbreviation": "Meldegemeinde",
+      "domicileData": "Wohnungsdaten",
+      "address": "Wohnadresse",
+      "comesFromTown": "Zuzug von",
+      "goesToAddress": "Wegzug nach"
+    },
+    "householdTypes": {
+      "undefined_household": "Haushaltsart noch nicht zugeteilt",
+      "private_household": "Privathaushalt",
+      "collective_household": "Kollektivhaushalt",
+      "collection_household": "Sammelhaushalt"
+    },
+    "floorTypes": {
+      "groundFloor": "Parterre, inkl. Hochparterre",
+      "upperFloor": "Obergeschoss",
+      "lowerFloor": "Untergeschoss"
+    },
+    "historySearchTypes": {
+      "currentDate": "aktuell",
+      "qualifyingDate": "per Stichtag"
+    },
+    "historySearch": {
+      "title": "History",
+      "text1": "Die Anzeige von Personen kann auf einen",
+      "text2": "beliebigen Stichtag gesetzt werden.",
+      "button_ok": "OK",
+      "button_cancel": "Abbrechen"
+    },
+    "personStatusTypes": {
+      "active": "Aktiver Einwohner",
+      "moved_away": "Weggezogen",
+      "deceased": "Verstorben",
+      "missing": "Verschollen"
+    },
+    "personStatusTypes": {
+      "active": "Aktiver Einwohner",
+      "moved_away": "Weggezogen",
+      "deceased": "Verstorben",
+      "missing": "Verschollen"
+    },
+    "restrictedVotingAndElectionRightFederationBoolean": {
+      "true": "Restriktion vorhanden",
+      "false": "Keine Restriktion"
+    },
+    "rooms": "Zimmer",
+    "languageOfCorrespondence": {
+      "de": "Deutsch",
+      "fr": "Französisch",
+      "it": "Italienisch",
+      "rm": "Rätoromanisch",
+      "en": "Englisch"
+    },
+    "lockedTitle": "Datensperre vorhanden",
+    "lockedTitleShort": "Datensperre",
+    "inactiveTitle": "Inaktiv"
+  },
+  "search": {
+    "search-description": {
+      "title": "Beschreibung",
+      "line1": "Suchkriterien vom Typ \"Personenidentifikatoren\" dürfen alleine gesucht werden, die restlichen Suchkriterien müssen mit mindestens einem weiteren Feld kombiniert werden.",
+      "line1_Simple": "Eine Suchabfrage muss aus mindestens zwei Zeichen bestehen.",
+      "line2": "Umlaute und Sonderzeichen werden bei der Suche nicht berücksichtigt (Cisse = Cissé).",
+      "line3": "Ein Fragezeichen \"?\" ersetzt ein einzelnes, nicht definiertes Zeichen (Me?er = Meier, Meyer, Meher, ...).",
+      "line4": "Ein Stern \"*\" ersetzt mehrere undefinierte Zeichen und kann im gleichen Suchbegriff nur einmal verwendet werden (M*ier = Maier, Meier, Mautenstier, ...).",
+      "line5": "Ein Fragezeichen \"?\" darf an erster Stelle eines Suchbegriffs stehen, ein Stern \"*\" nicht.",
+      "line6": "Ein Stern \"*\" darf nicht direkt auf ein Fragezeichen \"?\" folgen.",
+      "line7": "Wildcards können nur verwendet werden, wenn mindestens 2 weitere Zeichen geliefert werden (a* ist nicht erlaubt, ab* ist erlaubt)."
+    },
+    "technical-error": "Bei der Suche ist ein technischer Fehler aufgetreten.",
+    "options": {
+      "simple": "Einfache Suche",
+      "extended": "Erweiterte Suche",
+      "inactive-enabled": "mit inaktiven Personen",
+      "affiliation": "Zugehörigkeit",
+      "affiliation-resident": "Einwohner"
+    },
+    "name-search": {
+      "title": "Personalien",
+      "name": "Name",
+      "first-name": "Vornamen",
+      "alliance-name": "Allianzname",
+      "date-of-birth": "Geburtsdatum"
+    },
+    "address-search": {
+      "title": "Wohnadresse",
+      "street": "Strasse",
+      "house-number": "Hausnr.",
+      "zip-code": "PLZ",
+      "town": "Ort",
+      "reporting-municipality": "Meldegemeinde"
+    },
+    "id-search": {
+      "title": "Personenidentifikatoren",
+      "vn": "AHVN13",
+      "other-ids": "Weitere Identifikatoren"
+    },
+    "buttons": {
+      "clear-filter": "Eingabe löschen",
+      "search": "Suchen"
+    },
+    "search-table": {
+      "found-title": "Gefundene Personen: ",
+      "export-button": "Export",
+      "column-title": {
+        "perId": "Details",
+        "dataLockIcon": "Sperre",
+        "sexIcon": "m/w",
+        "name": "Name",
+        "callName": "Rufname",
+        "allianceName": "Allianzname",
+        "dateOfBirth": "Geburtsdatum",
+        "reportingMunicipalityWithCantonAbbreviation": "Meldegemeinde",
+        "street": "Strasse",
+        "houseNumber": "Nr",
+        "zipCode": "PLZ",
+        "town": "Ort",
+        "residences": "Meldeverh."
+      },
+      "residence-short": {
+        "mainResidenceShort": "HWS",
+        "secondaryResidenceShort": "NWS",
+        "otherResidenceShort": "KWS"
+      },
+      "export": {
+        "filename": "Export PER Personensuche",
+        "gender": {
+          "mars": "m",
+          "venus": "w",
+          "transgender": "u"
+        },
+        "column": {
+          "gender": "Geschlecht"
+        }
+      }
+    },
+    "simple-search": {
+      "title": "Einfache Suche",
+      "searchField": "Suche über Personenfelder..."
+    }
+  },
+  "general": {
+    "masked": "ZUGRIFF GESPERRT",
+    "unknown": "Unbekannt",
+    "swiss": "Schweiz",
+    "upToDate": "Aktuell",
+    "partnerRelationUnknown": "Beziehungspartner unbekannt",
+    "childTypes": {
+      "unknown": "Kind",
+      "daughter": "Tochter",
+      "son": "Sohn",
+      "foster-unknown": "Pflegekind",
+      "foster-daughter": "Pflegetochter",
+      "foster-son": "Pflegesohn"
+    },
+    "partnerTypes": {
+      "spouse-active": "Ehepartner",
+      "spouse-inactive": "Ex-Ehepartner",
+      "partner-active": "Partner in eingetr. Partnerschaft",
+      "partner-inactive": "Ex-Partner in eingetr. Partnerschaft",
+      "unknown": "Beziehungsstatus unbekannt"
+    },
+    "errorCodes": {
+      "EX_UNDEFINED": "Fachlicher Fehler. (Keine Definierte Fehlermeldung)",
+      "EX_10000": "Ungültiges Datum für die Anzeige des Details"
+    },
+    "httpErrorCodes": {
+      "500": "Es liegt es Server Problem vor. Bitte versuchen Sie es erneut oder wenden sie ich an den Support.",
+      "400": "Bei der Anfrage ist ein Fehler aufgetreten. Bitte überprüfen Sie ihre Eingaben.",
+      "fallback": "Bei der Anfrage ist ein allgemeiner Fehleraufgetreten. Bitte überprüfen Sie ihre Netzwerkverbindung."
+    }
+  },
+  "codes": {
+    "dataLock": {
+      "0": "Keine Sperre vorhanden",
+      "1": "Adresssperre vorhanden",
+      "2": "Auskunftssperre vorhanden"
+    },
+    "lockPaper": {
+      "0": "keine Sperre gesetzt",
+      "1": "Schriftensperre gesetzt"
+    },
+    "separation": {
+      "1": "freiwillig getrennt",
+      "2": "gerichtlich getrennt"
+    },
+    "cancellationReason": {
+      "1": "Gerichtlich aufgelöste Partnerschaft",
+      "2": "Ungültigerklärung",
+      "3": "Durch Verschollenerklärung",
+      "4": "Durch Tod aufgelöste Partnerschaft",
+      "9": "Unbekannt / Andere Gründe"
+    },
+    "maritalStatus": {
+      "1": "ledig",
+      "2": "verheiratet",
+      "3": "verwitwet",
+      "4": "geschieden",
+      "5": "unverheiratet",
+      "6": "in eingetragener Partnerschaft",
+      "7": "aufgelöste Partnerschaft",
+      "9": "unbekannt"
+    },
+    "sex": {
+      "1": "männlich",
+      "2": "weiblich",
+      "3": "unbestimmt"
+    },
+    "religion": {
+      "111": "Evangelisch-reformierte Kirche / Protestantische Kirche",
+      "121": "Römisch-katholische Kirche",
+      "122": "Christkatholische Kirche / Altkatholische Kirche",
+      "211": "Israelitische Gemeinschaft / Jüdische Glaubensgemeinschaft",
+      "211201": "Israelitische Cultursgemeinde",
+      "211301": "Jüdische Liberale Gemeinde",
+      "000": "unbekannt"
+    },
+    "residencePermit": {
+      "1006": "Meldepflichtige",
+      "1107": "Diplomat und internationaler Funktionär mit diplomatischer Immunität",
+      "1208": "internationaler Funktionär ohne diplomatische Immunität",
+      "1300": "nicht zugeteilt",
+      "100601": "Arbeitnehmer bei einem Schweizer Arbeitgeber",
+      "100602": "selbständiger Dienstleistungserbringer",
+      "100603": "entsandter Arbeitnehmer",
+      "0102": "Saisonarbeiter nicht EU/EFTA-Abkommen",
+      "0201": "Aufenthalter nach EU/EFTA-Abkommen",
+      "0202": "Aufenthalter nach EU/EFTA-Abkommen",
+      "0301": "Niedergelassener nach EU/EFTA-Abkommen",
+      "0302": "Niedergelassener nicht EU/EFTA-Abkommen",
+      "0401": "erwerbstätiger Ehepartner und Kinder von Angehörigen ausländischer Vertretungen oder staatlichen in-ternationalen Organisationen nach EU/EFTA-Abkommen",
+      "0402": "erwerbstätiger Ehepartner und Kinder von Angehörigen ausländischer Vertretungen oder staatlichen in-ternationalen Organisationen nicht EU/EFTA-Abkommen",
+      "0503": "Vorläufig Aufgenommene",
+      "0601": "Grenzgänger nach EU/EFTA-Abkommen",
+      "0602": "Grenzgänger nicht EU/EFTA-Abkommen",
+      "060101": "Grenzgänger nach EU/EFTA Abkommen <12 Monate",
+      "060201": "Grenzgänger nicht EU/EFTA-Abkommen <12 Monate",
+      "060102": "Grenzgänger nach EU/EFTA-Abkommen >=12 Monate",
+      "060202": "Grenzgänger nicht EU/EFTA-Abkommen >=12 Monate",
+      "0701": "Kurzaufenthalter nach EU/EFTA-Abkommen",
+      "0702": "Kurzaufenthalter nicht EU/EFTA-Abkommen",
+      "070101": "Kurzaufenthalter >=12 Monate nach EU/EFTA-Abkommen",
+      "070201": "Kurzaufenthalter >=12 Monate nicht EU/EFTA-Abkommen",
+      "070102": "Kurzaufenthalter >4 bis <12 Monate nach EU/EFTA-Abkommen",
+      "070202": "Kurzaufenthalter >4 bis <12 Monate nicht EU/EFTA-Abkommen",
+      "070103": "Dienstleistungserbringer <=4 Monate nach EU/EFTA-Abkommen",
+      "070104": "Kurzaufenthalter <=4 Monate nach EU/EFTA-Abkommen",
+      "070204": "Kurzaufenthalter <=4 Monate nicht EU/EFTA-Abkommen",
+      "070105": "Musiker und Künstler <=8 Monate nach EU/EFTA-Abkommen",
+      "070205": "Musiker und Künstler <=8 Monate nicht EU/EFTA-Abkommen",
+      "070206": "Tänzerin <=8 Monate",
+      "070907": "Stagiaires <=18 Monate",
+      "0804": "Asylsuchende",
+      "0905": "Schutzbedürftige"
+    },
+    "nationalityStatus": {
+      "0": "Staatsangehörigkeit unbekannt",
+      "1": "Staatenlos",
+      "2": "Staatsangehörigkeit bekannt"
+    },
+    "relation": {
+      "1": "Ehepartner / Ex-Eheparter",
+      "2": "Partner in eingetr. Partnerschaft / Ex-Partner in eingetr. Partnerschaft",
+      "3": "Mutter",
+      "4": "Vater",
+      "5": "Pflegevater",
+      "6": "Pflegemutter",
+      "7": "Beistand",
+      "8": "Beirat",
+      "9": "Vormund",
+      "10": "Vorsorgebeauftragter"
+    },
+    "careType": {
+      "1": "Keine elterliche Sorge oder nicht abgeklärt",
+      "2": "Elterliche Sorge",
+      "3": "Gemeinsame elterliche Sorge",
+      "4": "Alleinige elterliche Sorge"
+    }
+  },
+  "transforms": {
+    "boolean": {
+      "yesno": {
+        "true": "Ja",
+        "false": "Nein"
+      }
+    }
+  },
+  "no-permission-panel": {
+    "title": "Keine Berechtigung",
+    "errorMessage": "Der ausgewählte Mandant ist nicht für PER Auskunft berechtigt.",
+    "descriptiveMessage": "Stellen Sie sicher, dass Sie die benötigte Berechtigung für die Applikation besitzen oder melden Sie sich mit einem anderen Mandanten / Account an! Tipp: Sie können Ihren ausgewählten Mandanten oben rechts ändern.",
+    "signInWithOtherAccount": "mit anderem Account versuchen"
+  }
+}

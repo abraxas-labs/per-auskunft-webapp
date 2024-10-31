@@ -1,0 +1,132 @@
+@use 'sass:map';
+@use 'sass:color';
+@use '@abraxas/base-components/src/lib/styles/predefined/default.palette' as palette;
+
+$core: map.get(palette.$default-palette, "core");
+$signal: map.get(palette.$default-palette, "signal");
+$primary: map.get($core, "primary");
+$primary10: color.mix($primary, white, 10%);
+$locked: map.get($signal, "error");
+$inactive: map.get($signal, "warning");
+
+.header-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.header-container-small {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-bottom: 70px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2em;
+  margin: 2em;
+}
+
+.container-small {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1em;
+  margin: 1em;
+}
+
+.info-box {
+  background-color: white;
+  border: #dddddd solid 1px;
+  flex-grow: 1;
+}
+
+.info-box-inner {
+  margin: 1em;
+}
+
+.info-box-title {
+  font-weight: bolder;
+}
+
+.info-box-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.info-box-label {
+  font-size: 80%;
+  color: #7f7f7f;
+}
+
+.expansion-box {
+  background-color: white;
+  margin: 2em;
+}
+
+.expansion-box-small {
+  background-color: white;
+  margin: 1em;
+}
+
+
+.expansion-box-title {
+  font-weight: bolder;
+  font-size: 16px;
+  margin: 0.25em 0.5em 0 0.25em;
+}
+
+#a-bit-margin-top {
+  margin-top: 32px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-toolbar {
+  background-color: $primary10;
+}
+
+.header-label {
+  font-weight: bolder;
+  font-size: medium;
+}
+
+.date-button {
+  color: $primary;
+}
+
+.inactive {
+  background: color.mix($inactive, white, 30%) !important;
+}
+
+.locked {
+  background: color.mix($locked, white, 20%) !important;
+}
+
+.inactive-icon {
+  color: $inactive;
+}
+
+.locked-icon {
+  color: $locked;
+}
+
+.status-label {
+  margin-left: 0.3em;
+  font-size: small;
+}
+
+.status-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-button-container {
+  display: flex;
+  justify-content: right;
+}
+.date-button-container-small {
+  display: flex;
+  justify-content: left;
+}
