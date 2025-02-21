@@ -1,7 +1,8 @@
 import { Component, HostListener } from '@angular/core';
-import { ActiveAndOtherTenants } from './core/services/custom-tenant.service';
-import { catchError, filter, from, map, merge, of, Subscription, switchMap } from 'rxjs';
+import { ActiveAndOtherTenants, Organisation, OrganisationService } from './core/services/organisation.service';
+import { catchError, filter, from, map, merge, Observable, of, switchMap, tap } from 'rxjs';
 import { AuthenticationService, AuthorizationService, Tenant } from '@abraxas/base-components';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -9,22 +10,27 @@ import { AuthenticationService, AuthorizationService, Tenant } from '@abraxas/ba
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  private static currentWindowWidth: number = window.innerWidth;
   public activeTenant: Tenant = {} as Tenant;
   public userTenants: Tenant[] = [];
-  private subscription: Subscription;
   private authenticated: boolean = false;
   private authenticationDone: boolean = false;
-
+  public showLabel= environment.showLabel;
+  public env = environment.env;
+  public envColor = environment.envColor;
+  private static defaultEnvColor = 'green';
   public isSmallScreen = false;
   public isMediumScreen = false;
   public isBigScreen = true;
-  private static currentWindowWidth: number = window.innerWidth;
+  public viewOrganisations: Organisation[] = [];
+  public activeViewOrganisationId: Observable<string | undefined>;
 
   constructor(
     private readonly authorizationService: AuthorizationService,
     private readonly authenticationService: AuthenticationService,
+    private readonly organisationService: OrganisationService,
   ) {
-    this.subscription = merge(
+    merge(
       this.authenticationService.authenticationChanged.pipe(filter((authenticated) => authenticated)),
       this.authorizationService.activeTenantChanged,
     )
@@ -48,6 +54,27 @@ export class AppComponent {
         this.activeTenant = it.activeTenant;
         this.userTenants = it.userTenants;
       });
+
+
+    organisationService
+      .viewOrganisations()
+      .subscribe(it => {
+        this.viewOrganisations = it.sort((a, b) => a.organisationName.localeCompare(b.organisationName))
+      });
+    this.activeViewOrganisationId = organisationService.activeViewOrganisation()
+      .pipe(map(it => it?.organisationCode))
+  }
+
+  public static get isSmallScreen(): boolean {
+    return this.currentWindowWidth < 768;
+  }
+
+  public static get isMediumScreen(): boolean {
+    return !this.isSmallScreen && this.currentWindowWidth < 1200;
+  }
+
+  public static get isBigScreen(): boolean {
+    return this.currentWindowWidth > 1200;
   }
 
   async checkAuthentication(tenant: Tenant): Promise<void> {
@@ -73,6 +100,10 @@ export class AppComponent {
     this.authenticationService.logout();
   }
 
+  getEnvColor():string{
+    return this.envColor ? this.envColor : AppComponent.defaultEnvColor;
+  }
+
   @HostListener('window:resize', ['$event.target.innerWidth'])
   onResize(width: number) {
 
@@ -82,17 +113,8 @@ export class AppComponent {
     this.isBigScreen = AppComponent.isBigScreen;
 
   }
-  public static get isSmallScreen(): boolean {
-    return this.currentWindowWidth < 768;
+
+  activeViewOrganisationIdChanged($event: any) {
+    this.organisationService.setActiveViewOrganisationId($event);
   }
-
-  public static get isMediumScreen(): boolean {
-    return !this.isSmallScreen && this.currentWindowWidth < 1200;
-  }
-
-  public static get isBigScreen(): boolean {
-    return this.currentWindowWidth > 1200;
-  }
-
-
 }

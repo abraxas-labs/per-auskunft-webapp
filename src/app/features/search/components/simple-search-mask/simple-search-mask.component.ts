@@ -1,17 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-} from '@angular/forms';
-import {
-  atLeastTwoCharacterValidator, wildcardPositionValidator,
-} from '../../../../core/utils/commons';
-import { map, Observable } from 'rxjs';
-import { CustomTenantService, Organisation } from '../../../../core/services/custom-tenant.service';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { atLeastTwoCharacterValidator, wildcardPositionValidator } from '../../../../core/utils/commons';
 import { AppComponent } from '../../../../app.component';
 
 @Component({
@@ -33,13 +22,9 @@ export class SimpleSearchMaskComponent {
   clear = new EventEmitter<void>();
 
   public form: FormGroup;
+  private blockStartSearchEmit : boolean = false;
 
-  public visibleOrganisations: Observable<Organisation[]>;
-
-  constructor(
-    private readonly formBuilder: FormBuilder,
-    private readonly customTenantService: CustomTenantService
-  ) {
+  constructor(private readonly formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
       simpleSearch: new FormControl(null, [this.simpleSearchValidator]),
     });
@@ -48,11 +33,6 @@ export class SimpleSearchMaskComponent {
       this.valid.emit(this.form.valid);
       this.value.emit(this.form.value);
     });
-
-    this.customTenantService.loadVisibleOrgansiations();
-    this.visibleOrganisations = this.customTenantService
-      .visibleOrganisations()
-      .pipe(map((arr) => arr.filter((it) => it.organisationTypeCode === '1')));
   }
 
   clearSearch() {
@@ -61,17 +41,22 @@ export class SimpleSearchMaskComponent {
     this.clear.emit();
   }
 
-  handleEnter($event: any) {
-    $event.preventDefault();
-    this.searchEmit();
-  }
-
-  handleSearch() {
-    this.searchEmit();
-  }
-
-  searchEmit() {
+  /*
+    Taste "Enter" löst "handleSearchButton" und "handleSearchField" in dieser Reihenfolge aus.
+    Mittels "blockSearchEmit" unterdrücken wir den 2ten Event, damit nicht 2 Suchen abgesetzt werden.
+    Etwas unschön, sollte eigentlich über event.preventDefault funktionieren.
+   */
+  handleSearchButton($event: PointerEvent) {
+    this.blockStartSearchEmit = $event.pointerType != 'mouse';
     this.startSearch.emit();
+  }
+
+  handleSearchField() {
+    if (this.blockStartSearchEmit) {
+      this.blockStartSearchEmit = false;
+    } else {
+      this.startSearch.emit();
+    }
   }
 
   private simpleSearchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {

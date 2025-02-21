@@ -16,3 +16,18 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.chip-container {
+  margin: 10px;
+}
+
+.chip-label {
+  padding: 5px 20px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.organisation-drop-down {
+  margin-top: 20px;
+  min-width: 200px;
+}

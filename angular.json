@@ -85,6 +85,20 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "local-te": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.te.ts"
+                }
+              ],
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
@@ -100,6 +114,9 @@
             },
             "development": {
               "browserTarget": "per-auskunft-webapp:build:development"
+            },
+            "local-te": {
+              "buildTarget": "per-auskunft-webapp:build:local-te"
             }
           },
           "defaultConfiguration": "development"

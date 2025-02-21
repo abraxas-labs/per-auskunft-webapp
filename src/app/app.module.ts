@@ -11,7 +11,7 @@ import {
   AuthorizationModule,
   ButtonModule,
   DateModule,
-  DialogModule,
+  DialogModule, DropdownModule,
   RadioButtonModule,
   UserModule,
 } from '@abraxas/base-components';
@@ -91,6 +91,7 @@ export function getBaseHref(platformLocation: PlatformLocation): string {
     AlertBarModule,
     ButtonModule,
     CommonModule,
+    DropdownModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: GlobalErrorHandler },

@@ -1,3 +1,7 @@
+<bc-alert-bar *ngIf="hasWarning" [color]="'warning'"
+              [message]=warningMessage
+              (dismissClick)="hasWarning = false">
+</bc-alert-bar>
 <div [ngClass]="{'search-container': isBigOrMediumScreen(), 'search-container-small': isSmallScreen()}">
   <div [ngClass]="{'options-line': isBigOrMediumScreen(), 'options-line-small': isSmallScreen()}">
     <bc-segmented-control-group
@@ -59,7 +63,6 @@
         <li>{{ 'search.search-description.line5' | translate }}</li>
         <li>{{ 'search.search-description.line6' | translate }}</li>
         <li>{{ 'search.search-description.line7' | translate }}</li>
-
       </ul>
     </div>
   </bc-skeleton>

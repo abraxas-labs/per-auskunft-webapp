@@ -131,12 +131,6 @@
       "deceased": "Verstorben",
       "missing": "Verschollen"
     },
-    "personStatusTypes": {
-      "active": "Aktiver Einwohner",
-      "moved_away": "Weggezogen",
-      "deceased": "Verstorben",
-      "missing": "Verschollen"
-    },
     "restrictedVotingAndElectionRightFederationBoolean": {
       "true": "Restriktion vorhanden",
       "false": "Keine Restriktion"
@@ -221,7 +215,7 @@
         "otherResidenceShort": "KWS"
       },
       "export": {
-        "filename": "Export PER Personensuche",
+        "filename": "Export Trefferliste PER Auskunft - präsentiert von Abraxas",
         "gender": {
           "mars": "m",
           "venus": "w",
@@ -259,7 +253,7 @@
       "unknown": "Beziehungsstatus unbekannt"
     },
     "errorCodes": {
-      "EX_UNDEFINED": "Fachlicher Fehler. (Keine Definierte Fehlermeldung)",
+      "EX_UNDEFINED": "Es ist ein unbekannter Fehler aufgetreten, bitte kontaktieren Sie den Support.",
       "EX_10000": "Ungültiges Datum für die Anzeige des Details"
     },
     "httpErrorCodes": {
@@ -369,10 +363,10 @@
       "10": "Vorsorgebeauftragter"
     },
     "careType": {
-      "1": "Keine elterliche Sorge oder nicht abgeklärt",
-      "2": "Elterliche Sorge",
-      "3": "Gemeinsame elterliche Sorge",
-      "4": "Alleinige elterliche Sorge"
+      "0": "Keine elterliche Sorge oder nicht abgeklärt",
+      "1": "Elterliche Sorge",
+      "2": "Gemeinsame elterliche Sorge",
+      "3": "Alleinige elterliche Sorge"
     }
   },
   "transforms": {

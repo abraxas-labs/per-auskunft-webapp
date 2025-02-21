@@ -37,17 +37,17 @@
         </div>
         <div *ngSwitchCase='TableColumnIds.DOMICILE_DATA'>
           <div class='residence-wrapper' *ngFor='let domicileData of row[TableColumnIds.DOMICILE_DATA]'>
-            <p class='multiLineValue'>{{domicileData}}</p>
+            <p>{{domicileData}}</p>
           </div>
         </div>
         <div *ngSwitchCase='TableColumnIds.ADDRESS'>
           <div class='residence-wrapper' *ngFor='let addressData of row[TableColumnIds.ADDRESS]'>
-            <p class='multiLineValue'>{{addressData}}</p>
+            <p>{{addressData}}</p>
           </div>
         </div>
         <div *ngSwitchCase='TableColumnIds.GOES_TO_ADDRESS'>
           <div class='residence-wrapper' *ngFor='let addressData of row[TableColumnIds.GOES_TO_ADDRESS]'>
-            <p class='multiLineValue'>{{addressData}}</p>
+            <p>{{addressData}}</p>
           </div>
         </div>
         <div *ngSwitchDefault>{{ row[column.expression] }}</div>

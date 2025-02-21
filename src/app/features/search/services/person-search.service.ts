@@ -1,39 +1,39 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthorizationService } from '@abraxas/base-components';
-import { from, Observable, switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {FullTextSearchAttributes, SearchAttributes, SearchResult} from '../models/models';
+import { QueryParameterService, QueryParams } from '../../../core/services/query-parameter.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PersonSearchService {
+
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly authorizationService: AuthorizationService
-  ) {}
-
-  public searchPerson(searchObj: SearchAttributes): Observable<SearchResult> {
-    return from(this.authorizationService.getActiveTenant()).pipe(
-      switchMap((tenant) => this.doSearchPerson(searchObj, tenant.id))
-    );
+    private readonly queryParamService: QueryParameterService) {
   }
 
-  private doSearchPerson(searchObj: SearchAttributes, tenantId: string): Observable<SearchResult> {
-    const url = `${environment.apiBaseUrl}/auskunft/natPerson/search?tenantId=${tenantId}`;
-    return this.httpClient.post<SearchResult>(url, searchObj);
+  public searchPerson(searchObj: SearchAttributes): Observable<SearchResult> {
+    return this.queryParamService.activeQueryParams
+      .pipe(switchMap((params) => this.doSearchPerson(searchObj, params)));
+  }
+
+  private doSearchPerson(searchObj: SearchAttributes, params: QueryParams): Observable<SearchResult> {
+    const url = `${environment.apiBaseUrl}/auskunft/natPerson/search`;
+    return this.httpClient.post<SearchResult>(url, searchObj, {params: params.toHttpParams()});
   }
 
   public fullTextSearchPerson(searchObj: FullTextSearchAttributes): Observable<SearchResult> {
-    return from(this.authorizationService.getActiveTenant()).pipe(
-      switchMap((tenant) => this.doFullTextSearchPerson(searchObj, tenant.id))
+    return this.queryParamService.activeQueryParams.pipe(
+      switchMap((params) => this.doFullTextSearchPerson(searchObj, params))
     );
   }
 
-  private doFullTextSearchPerson(searchObj: FullTextSearchAttributes, tenantId: string): Observable<SearchResult> {
-    const url = `${environment.apiBaseUrl}/auskunft/natPerson/fullTextSearch?tenantId=${tenantId}`;
-    return this.httpClient.post<SearchResult>(url, searchObj);
+  private doFullTextSearchPerson(searchObj: FullTextSearchAttributes, params: QueryParams): Observable<SearchResult> {
+    const url = `${environment.apiBaseUrl}/auskunft/natPerson/fullTextSearch`;
+    return this.httpClient.post<SearchResult>(url, searchObj, {params: params.toHttpParams()});
   }
 
 }

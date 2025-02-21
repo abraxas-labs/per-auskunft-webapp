@@ -3,7 +3,7 @@
     <bc-header-cell class="guardianship-table-header-cell" sort *headerCellDef
       >{{ column.title }}
     </bc-header-cell>
-    <bc-data-cell *dataCellDef="let row">
+    <bc-data-cell class='guardian-container' *dataCellDef="let row">
       <div [ngSwitch]="column.expression">
         <div *ngSwitchCase="TableColumnIds.DATA_LOCK_ICON">
           <bc-icon *ngIf="row['dataLockIcon']" icon="{{ row['dataLockIcon'] }}" iconColor="none"></bc-icon>
@@ -21,7 +21,7 @@
         </div>
         <div *ngSwitchCase="TableColumnIds.ADDRESS">
           <div class='residence-wrapper' *ngFor='let addressData of row[TableColumnIds.ADDRESS]'>
-            <p class='multiLineValue'>{{addressData}}</p>
+            <p>{{addressData}}</p>
           </div>
         </div>
         <div *ngSwitchDefault>{{ row[column.expression] }}</div>

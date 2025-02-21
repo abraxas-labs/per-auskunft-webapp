@@ -4,22 +4,35 @@
   title='PER Auskunft'
   [showAppDrawer]='false'
   [tenants]='userTenants'
-  [tenant]='activeTenant'
-></bc-app-header-bar-iam>
+  [tenant]='activeTenant'>
+  <div *ngIf="getAuth() && viewOrganisations.length > 0">
+    <bc-dropdown [class]='"organisation-drop-down"'
+                 [items]='viewOrganisations'
+                 [value]="activeViewOrganisationId | async"
+                 [valueExpr]='"organisationCode"'
+                 [displayExpr]='"organisationName"'
+                 (valueChange)='activeViewOrganisationIdChanged($event)'></bc-dropdown>
+  </div>
+  <div *ngIf="showLabel" class="chip-container float-right">
+    <label class="chip-label"
+           [style.background-color]="getEnvColor()"
+    >{{ this.env }}</label>
+  </div>
+</bc-app-header-bar-iam>
 <div *ngIf='getAuth(); else permissionDenied'>
   <bc-alert-container></bc-alert-container>
   <router-outlet></router-outlet>
 </div>
 <ng-template #permissionDenied>
-  <div *ngIf="getAuthDone()">
+  <div *ngIf='getAuthDone()'>
     <div class='auth-container'>
-      <h2>{{'no-permission-panel.title' | translate}}</h2>
+      <h2>{{ 'no-permission-panel.title' | translate }}</h2>
       <bc-alert-bar
         message="{{'no-permission-panel.errorMessage' | translate}}"
         [color]="'error'"
         [displayDismissAction]='false'>
       </bc-alert-bar>
-      <div>{{'no-permission-panel.descriptiveMessage' | translate}}
+      <div>{{ 'no-permission-panel.descriptiveMessage' | translate }}
       </div>
       <bc-button class='button-container'
                  [color]="'warn'"

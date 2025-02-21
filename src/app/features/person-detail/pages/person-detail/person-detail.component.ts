@@ -93,6 +93,10 @@ export class PersonDetailComponent implements OnInit, OnDestroy {
             this.setHeaderLabel(this.person);
           },
           error: (error) => {
+            // We reset person and headerLabel, so we can be sure,
+            // that in case of an error no old data is still shown to the user.
+            this.person = undefined;
+            this.headerLabel = '';
             this.isLoading = false;
             throw findTechnicalErrorMessage(error);
           }

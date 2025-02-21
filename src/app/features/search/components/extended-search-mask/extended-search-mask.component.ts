@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 
 import { map, Observable } from 'rxjs';
-import { CustomTenantService, Organisation } from '../../../../core/services/custom-tenant.service';
+import { OrganisationService, Organisation } from '../../../../core/services/organisation.service';
 import { AppComponent } from '../../../../app.component';
 
 @Component({
@@ -48,7 +48,7 @@ export class ExtendedSearchMaskComponent {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly customTenantService: CustomTenantService
+    private readonly customTenantService: OrganisationService
   ) {
     this.form = this.formBuilder.group(
       {
@@ -75,10 +75,8 @@ export class ExtendedSearchMaskComponent {
       this.valid.emit(this.form.valid);
       this.value.emit(this.form.value);
     });
-
-    this.customTenantService.loadVisibleOrgansiations();
     this.visibleOrganisations = this.customTenantService
-      .visibleOrganisations()
+      .reportingMunicipalities()
       .pipe(map((arr) => arr.filter((it) => it.organisationTypeCode === '1')));
   }
 

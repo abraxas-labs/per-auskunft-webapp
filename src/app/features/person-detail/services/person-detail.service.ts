@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthorizationService } from '@abraxas/base-components';
-import { from, map, Observable, switchMap } from 'rxjs';
+import {
+  map,
+  Observable,
+  switchMap
+} from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -26,17 +29,19 @@ import {
   MaskedLock,
   MaskedNameOfParent,
   MaskedNaturalPersonAddonData,
+  MaskedResidenceDwellingData,
   NaturalPersonDTO,
   NaturalPersonViewModel,
   PersonInformationViewModel,
   PersonWithRelationsDTO,
   PersonWithRelationsViewModel,
   RelatedPerson,
-  RelatedPersonViewModel, MaskedResidenceDwellingData,
+  RelatedPersonViewModel,
 } from '../models/models';
 import { MaskedPipe } from '../../../shared/pipes/masked.pipe';
 import { dataLockToIcon, sexCodeToIcon } from '../../../core/utils/commons';
 import { MaskedDwellingAddressV2 } from '../../../core/models/models';
+import { QueryParameterService, QueryParams } from '../../../core/services/query-parameter.service';
 
 export enum languageOfCorrespondenceCodes {
   de,
@@ -50,9 +55,10 @@ export enum languageOfCorrespondenceCodes {
   providedIn: 'root',
 })
 export class PersonDetailService {
+
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly authorizationService: AuthorizationService,
+    private readonly queryParamService: QueryParameterService,
     private readonly datePipe: DatePipe,
     private readonly maskedPipe: MaskedPipe,
     private readonly translate: TranslateService,
@@ -60,18 +66,20 @@ export class PersonDetailService {
   }
 
   public loadPersonWithDate(id: string, validFrom: string): Observable<PersonWithRelationsViewModel> {
-    return from(this.authorizationService.getActiveTenant()).pipe(
-      switchMap((tenant) => this.doLoadPersonWithDate(id, tenant.id, validFrom)),
-    );
+
+    return this.queryParamService.activeQueryParams
+      .pipe(switchMap((params) => this.doLoadPersonWithDate(id, validFrom, params)));
   }
 
   private doLoadPersonWithDate(
     id: string,
-    tenantId: string,
     validFrom: string,
-  ): Observable<PersonWithRelationsViewModel> {
-    const url = `${environment.apiBaseUrl}/auskunft/natPerson/${id}?tenantId=${tenantId}&validFrom=${validFrom}`;
-    return this.httpClient.get<PersonWithRelationsDTO>(url).pipe(map((it) => this.toViewModelWithRelations(it)));
+    params: QueryParams): Observable<PersonWithRelationsViewModel> {
+
+    const url = `${environment.apiBaseUrl}/auskunft/natPerson/${id}`;
+    return this.httpClient
+      .get<PersonWithRelationsDTO>(url, { params: params.toHttpParams().set('validFrom', validFrom) })
+      .pipe(map((it) => this.toViewModelWithRelations(it)));
   }
 
   private toViewModelWithRelations(
@@ -92,7 +100,7 @@ export class PersonDetailService {
       },
       personStatus: dto.personStatus,
       personEvalDate: dto.personEvalDate,
-      hasLock: dto.hasLock
+      hasLock: dto.hasLock,
     };
   }
 
@@ -168,7 +176,7 @@ export class PersonDetailService {
           firstname: it.associatedPerson.firstName,
           address: this.getAddress(it.maskedFilteredGuardianData),
           perId: it.associatedPerson.perId,
-          hasLock: it.associatedPerson.hasLock
+          hasLock: it.associatedPerson.hasLock,
         })),
 
       familyRelations: dto.person.familyRelations.map((it) => this.toRelatedPersonViewModel(it)),
@@ -181,7 +189,7 @@ export class PersonDetailService {
       residenceData: this.concatMaps(
         this.getResidenceDataMap(dto.person.mainResidenceWithDwellingData),
         this.getResidenceDataMap(dto.person.secondaryResidenceWithDwellingData),
-        this.getResidenceDataMap(dto.person.otherResidenceWithDwellingData)
+        this.getResidenceDataMap(dto.person.otherResidenceWithDwellingData),
       ),
     };
   }
@@ -260,14 +268,14 @@ export class PersonDetailService {
     otherResidence: MaskedResidenceDwellingData[],
   ): MaskedResidenceDwellingData[] {
     return [
-      ...mainResidence.map((it: MaskedResidenceDwellingData) => ({...it, residenceCode: '1'})),
-      ...secondaryResidence.map((it: MaskedResidenceDwellingData) => ({...it, residenceCode: '2'})),
-      ...otherResidence.map((it: MaskedResidenceDwellingData) => ({...it, residenceCode: '3'}))
+      ...mainResidence.map((it: MaskedResidenceDwellingData) => ({ ...it, residenceCode: '1' })),
+      ...secondaryResidence.map((it: MaskedResidenceDwellingData) => ({ ...it, residenceCode: '2' })),
+      ...otherResidence.map((it: MaskedResidenceDwellingData) => ({ ...it, residenceCode: '3' })),
     ];
   }
 
   private getResidenceDataMap(
-    residenceData: any
+    residenceData: any,
   ): MaskedResidenceDwellingData[] {
     if (typeof residenceData[Symbol.iterator] === 'function') { // prüft ob residenceData bereits eine Liste ist
       return residenceData;
@@ -454,7 +462,7 @@ export class PersonDetailService {
       languageOfCorrespondenceShort.value !== undefined &&
       languageOfCorrespondenceCodes.hasOwnProperty(languageOfCorrespondenceShort.value.toLowerCase())) ?
       mapMasked(languageOfCorrespondenceShort,
-        (it) => this.translate.instant('person-detail.languageOfCorrespondence.'+it.toLowerCase())) :
+        (it) => this.translate.instant('person-detail.languageOfCorrespondence.' + it.toLowerCase())) :
       languageOfCorrespondenceShort;
   }
 

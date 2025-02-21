@@ -96,7 +96,7 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
     private readonly customRouting: CustomRoutingService,
     private readonly permissionService: PermissionService
   ) {
-    this.permissionService.loadPermission().subscribe({
+    this.permissionService.permission().subscribe({
       next: (it) => {
         this.searchExportAllowed = it.searchExport;
       },
@@ -207,6 +207,8 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
         },
       ],
     });
+    // PERREGIST-5590: Das Semikolon muss als Trennzeichen verwendet werden
+    csvConfig.fieldSeparator = ';';
     const csv = generateCsv(csvConfig)(this.dataSource.data.map(it => this.toCsvRow(it)) as any);
     return asBlob(csvConfig)(csv);
   }

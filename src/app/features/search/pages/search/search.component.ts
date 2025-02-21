@@ -10,7 +10,7 @@ import { findTechnicalErrorMessage, getValidFromAsUTCString } from '../../../../
 import { PermissionService } from '../../../../core/services/permission.service';
 import { BehaviorSubject, debounceTime, Observable } from 'rxjs';
 import { AppComponent } from '../../../../app.component';
-import { AlertBarService } from '@abraxas/base-components';
+import { OrganisationService } from '../../../../core/services/organisation.service';
 
 export enum SearchOption {
   Simple,
@@ -45,21 +45,23 @@ export class SearchComponent {
   private searchValue: any;
   private selectedHistoryDate: Date = new Date();
   private selectedHistorySearchType: HistorySearchType = HistorySearchType.CURRENT_DATE;
+  public hasWarning: boolean = false;
+  public warningMessage: string = '';
 
   constructor(
     private readonly translate: TranslateService,
     private readonly searchService: PersonSearchService,
     private readonly permissionService: PermissionService,
-    private readonly alertService: AlertBarService
+    private readonly organisationService: OrganisationService
   ) {
     this.searchOptions = [
       {
-        displayText: translate.instant('search.options.simple'),
+        displayText: this.translate.instant('search.options.simple'),
         value: SearchOption.Simple,
         disabled: false,
       },
       {
-        displayText: translate.instant('search.options.extended'),
+        displayText: this.translate.instant('search.options.extended'),
         value: SearchOption.Extended,
         disabled: false,
       },
@@ -77,13 +79,14 @@ export class SearchComponent {
       selectedHistoryDate: this.selectedHistoryDate,
     };
 
-    this.permissionService.loadPermission().subscribe({
+    this.permissionService.permission().subscribe({
       next: (it) => {
         this.withActivePersons = it.accessToInactiveResidents;
       },
     });
 
     this.isLoading = this._isLoading.pipe(debounceTime(500));
+    this.organisationService.activeViewOrganisation().subscribe(() => this.clear());
   }
 
   searchOptionChanged($event: any) {
@@ -146,7 +149,9 @@ export class SearchComponent {
       .subscribe({
         next: (it) => {
           this.results = it.result?.items;
-          it.errors?.forEach(err => this.alertService.warning(err));
+          it.errors?.forEach(warning => {
+            this.hasWarning = true;
+            this.warningMessage = warning});
           this._isLoading.next(false);
         },
         error: (error) => {
@@ -176,7 +181,9 @@ export class SearchComponent {
       .subscribe({
         next: (it) => {
           this.results = it.result?.items;
-          it.errors?.forEach(err => this.alertService.warning(err));
+          it.errors?.forEach(warning => {
+            this.hasWarning = true;
+            this.warningMessage = warning});
           this._isLoading.next(false);
         },
         error: (error) => {
@@ -189,6 +196,7 @@ export class SearchComponent {
   clear() {
     this.results = undefined;
     this.showSearchDescription = true;
+    this.hasWarning = false;
   }
 
   public isSmallScreen() {

@@ -1,4 +1,5 @@
-<mat-toolbar [ngClass]="{'header-container': isBigScreen(), 'header-container-small': isSmallOrMediumScreen()}">
+<mat-toolbar
+  [ngClass]="{'header-container':isBigScreen(),'header-container-small':isSmallOrMediumScreen(),'inactive':!isActive,'locked':hasLock,'active':isActive}">
   <div class='header-label'>{{ headerLabel }}</div>
   <div [ngSwitch]='personStatus()'>
     <div *ngSwitchCase='"inactive"'>

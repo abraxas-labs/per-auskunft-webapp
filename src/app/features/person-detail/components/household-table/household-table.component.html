@@ -3,7 +3,7 @@
 
   <bc-header-cell class="household-table-header-cell" sort *headerCellDef>{{ column.title }}
   </bc-header-cell>
-    <bc-data-cell *dataCellDef="let row">
+    <bc-data-cell class='household-container' *dataCellDef="let row">
       <div [ngSwitch]="column.expression">
         <div *ngSwitchCase="TableColumnIds.DATA_LOCK_ICON">
           <bc-icon *ngIf="row['dataLockIcon']" icon="{{ row['dataLockIcon'] }}" iconColor="none"></bc-icon>

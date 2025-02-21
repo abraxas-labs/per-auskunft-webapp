@@ -1,7 +1,7 @@
 <bc-table sort [dataSource]="dataSource" [sortMultiple]="false" [fixed]="false">
   <ng-container *ngFor="let column of columns" [columnDef]="column.expression">
     <bc-header-cell sort *headerCellDef>{{ column.title }} </bc-header-cell>
-    <bc-data-cell *dataCellDef="let row">
+    <bc-data-cell  class='family-container' *dataCellDef="let row">
       <div [ngSwitch]="column.expression">
         <div *ngSwitchCase="TableColumnIds.DATA_LOCK_ICON">
           <bc-icon
@@ -27,12 +27,12 @@
         </div>
         <div *ngSwitchCase='TableColumnIds.ADDRESS'>
           <div *ngFor='let addressData of row[TableColumnIds.ADDRESS]'>
-            <p class='multiLineValue'>{{addressData}}</p>
+            <p>{{addressData}}</p>
           </div>
         </div>
         <div *ngSwitchCase='TableColumnIds.CONTACT_ADDRESS'>
           <div *ngFor='let addressData of row[TableColumnIds.CONTACT_ADDRESS]'>
-            <p class='multiLineValue'>{{addressData}}</p>
+            <p>{{addressData}}</p>
           </div>
         </div>
         <div *ngSwitchDefault>{{ row[column.expression] }}</div>
