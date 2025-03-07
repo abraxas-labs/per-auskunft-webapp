@@ -5,11 +5,11 @@ import {
   MaskedResidenceDwellingData,
   NaturalPersonViewModel,
 } from '../../models/models';
-import { SortDirective, TableDataSource } from '@abraxas/base-components';
-import { TranslateService } from '@ngx-translate/core';
+import { SortDirective, StatusLabelModule, TableDataSource, TableModule } from '@abraxas/base-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MaskedPipe } from '../../../../shared/pipes/masked.pipe';
 import { concatMaskedValues, MaskedValue, value } from '../../../../core/utils/types';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 export interface Column {
   title: string;
@@ -32,6 +32,17 @@ export enum TableColumnIds {
   selector: 'app-residences-table',
   templateUrl: './residences-table.component.html',
   styleUrls: ['./residences-table.component.scss'],
+  standalone: true,
+  imports: [
+    TableModule,
+    NgSwitch,
+    StatusLabelModule,
+    TranslateModule,
+    NgForOf,
+    NgSwitchCase,
+    NgSwitchDefault,
+    NgIf,
+  ],
 })
 export class ResidencesTableComponent implements OnInit, OnChanges {
   @Input()

@@ -22,6 +22,7 @@ export const environment: Environment = {
   },
   authorizationConfig: {
     permissionEndpoint: 'https://sta.sec.abraxas-apis.ch/permission',
+    includeDelegations: true
   },
   userConfig: {
     identityEndpoint: 'https://sta.sec.abraxas-apis.ch/identity',

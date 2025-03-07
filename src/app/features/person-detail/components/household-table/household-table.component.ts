@@ -1,11 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { SortDirective, TableDataSource } from '@abraxas/base-components';
+import { ButtonModule, IconModule, SortDirective, TableDataSource, TableModule } from '@abraxas/base-components';
 import { CustomRoutingService } from '../../../../shared/services/custom-routing.service';
 import { MaskedPipe } from '../../../../shared/pipes/masked.pipe';
 import { HouseholdMember } from '../../models/models';
 import { TranslateService } from '@ngx-translate/core';
 import { dataLockToIcon, sexCodeToIcon } from '../../../../core/utils/commons';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { TableColumn } from '../../../search/components/search-result-table/search-result-table.component';
 import { MaskedValue } from '../../../../core/utils/types';
 
@@ -32,6 +32,17 @@ export enum TableColumnIds {
   selector: 'app-household-table',
   templateUrl: './household-table.component.html',
   styleUrls: ['./household-table.component.scss'],
+  standalone: true,
+  imports: [
+    TableModule,
+    NgSwitch,
+    IconModule,
+    ButtonModule,
+    NgForOf,
+    NgSwitchCase,
+    NgIf,
+    NgSwitchDefault,
+  ],
 })
 export class HouseholdTableComponent implements OnInit, OnChanges {
   @Input()

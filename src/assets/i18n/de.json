@@ -15,22 +15,24 @@
       "general": "Allgemeine Personenangaben"
     },
     "labels": {
-      "officialName": "Name",
+      "officialName": "Amtlicher Name",
       "firstName": "Vornamen",
-      "callName": "Rufnamen",
-      "allianceName": "Allianzname",
-      "nameOnForeignPassport": "Name Pass",
+      "callName": "Rufname",
       "originalName": "Lediger Name",
+      "allianceName": "Allianzname",
+      "aliasName": "Aliasname",
       "otherName": "Anderer Name",
-      "aliasName": "Alias Name",
+      "nameOnForeignPassport": "Name / Vornamen im ausländischen Pass",
+      "declaredForeignName": "Name / Vornamen gemäss Deklaration",
+      "nameValidFrom": "Name gültig ab",
       "status": "Status",
       "sex": "Geschlecht",
-      "ahvn13": "AHVN13",
+      "ahvn13": "AHV-Versichertennummer",
       "dateOfBirth": "Geburtsdatum",
       "placeOfBirth": "Geburtsort",
       "countryOfBirth": "Geburtsland",
       "placeOfOriginName": "Heimatort",
-      "naturalizationDate": "Bürgerrecht gültig ab",
+      "naturalizationDate": "Einbürgerungsdatum",
       "religion": "Konfession",
       "entryDate": "Einreisedatum",
       "residencePermitCode": "Ausländerkategorie",
@@ -161,9 +163,9 @@
     },
     "technical-error": "Bei der Suche ist ein technischer Fehler aufgetreten.",
     "options": {
-      "simple": "Einfache Suche",
+      "simple": "Volltextsuche",
       "extended": "Erweiterte Suche",
-      "inactive-enabled": "mit inaktiven Personen",
+      "inactive-enabled": "inaktive Personen",
       "affiliation": "Zugehörigkeit",
       "affiliation-resident": "Einwohner"
     },
@@ -229,6 +231,10 @@
     "simple-search": {
       "title": "Einfache Suche",
       "searchField": "Suche über Personenfelder..."
+    },
+    "header": {
+      "organisationPlaceholder": "Verbund auswählen...",
+      "noViewOrganisation": "Bitte stellen Sie sicher, dass ein Verbund gewählt wurde."
     }
   },
   "general": {
@@ -254,7 +260,8 @@
     },
     "errorCodes": {
       "EX_UNDEFINED": "Es ist ein unbekannter Fehler aufgetreten, bitte kontaktieren Sie den Support.",
-      "EX_10000": "Ungültiges Datum für die Anzeige des Details"
+      "EX_10000": "Ungültiges Datum für die Anzeige des Details",
+      "EX_10003": "Handbuch kann nicht geöffnet werden."
     },
     "httpErrorCodes": {
       "500": "Es liegt es Server Problem vor. Bitte versuchen Sie es erneut oder wenden sie ich an den Support.",
@@ -303,8 +310,8 @@
       "121": "Römisch-katholische Kirche",
       "122": "Christkatholische Kirche / Altkatholische Kirche",
       "211": "Israelitische Gemeinschaft / Jüdische Glaubensgemeinschaft",
-      "211201": "Israelitische Cultursgemeinde",
-      "211301": "Jüdische Liberale Gemeinde",
+      "211201": "Israelitische Cultusgemeinde",
+      "211301": "Jüdisch Liberale Gemeinde",
       "000": "unbekannt"
     },
     "residencePermit": {

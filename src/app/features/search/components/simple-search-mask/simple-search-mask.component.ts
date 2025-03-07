@@ -1,12 +1,31 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 import { atLeastTwoCharacterValidator, wildcardPositionValidator } from '../../../../core/utils/commons';
 import { AppComponent } from '../../../../app.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgClass } from '@angular/common';
+import { ButtonModule, SearchModule } from '@abraxas/base-components';
 
 @Component({
   selector: 'app-simple-search-mask',
   templateUrl: './simple-search-mask.component.html',
   styleUrls: ['./simple-search-mask.component.scss'],
+  standalone: true,
+  imports: [
+    TranslateModule,
+    ReactiveFormsModule,
+    NgClass,
+    SearchModule,
+    ButtonModule,
+  ],
 })
 export class SimpleSearchMaskComponent {
   @Output()

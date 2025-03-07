@@ -2,23 +2,35 @@
   link='/'
   logo='PER'
   title='PER Auskunft'
-  [showAppDrawer]='false'
+  [showAppDrawer]='true'
   [tenants]='userTenants'
-  [tenant]='activeTenant'>
-  <div *ngIf="getAuth() && viewOrganisations.length > 0">
+  [tenant]='activeTenant'
+  (click)='logoClicked($event)'
+  (tenantChanged)="reloadPage()">
+  <div *ngIf='getAuth()' class='dropdown-container'>
     <bc-dropdown [class]='"organisation-drop-down"'
                  [items]='viewOrganisations'
                  [value]="activeViewOrganisationId | async"
+                 [placeholder]="'search.header.organisationPlaceholder' | translate"
                  [valueExpr]='"organisationCode"'
                  [displayExpr]='"organisationName"'
                  (valueChange)='activeViewOrganisationIdChanged($event)'></bc-dropdown>
   </div>
-  <div *ngIf="showLabel" class="chip-container float-right">
-    <label class="chip-label"
-           [style.background-color]="getEnvColor()"
+
+  <div *ngIf='showLabel' class='chip-container float-right'>
+    <label class='chip-label'
+           [style.background-color]='getEnvColor()'
     >{{ this.env }}</label>
   </div>
+
+  <bc-icon-button class="help-container float-right"
+                  [color]="'primary'"
+                  [icon]="'question-circle-o'"
+                  (buttonClick)='openPdf()'>
+  </bc-icon-button>
+
 </bc-app-header-bar-iam>
+
 <div *ngIf='getAuth(); else permissionDenied'>
   <bc-alert-container></bc-alert-container>
   <router-outlet></router-outlet>

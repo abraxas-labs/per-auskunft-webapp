@@ -3,7 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PersonDetailService } from '../../services/person-detail.service';
 import { PersonWithRelationsViewModel } from '../../models/models';
-import { DialogService } from '@abraxas/base-components';
+import {
+  ButtonModule,
+  DialogService,
+  ExpansionPanelModule,
+  IconModule,
+  SkeletonModule,
+  StatusLabelModule,
+} from '@abraxas/base-components';
 import {
   DialogData,
   HistorySearchType,
@@ -16,14 +23,41 @@ import {
   getValidFromAsUTCString,
   isUTCDateStringToday,
 } from '../../../../core/utils/commons';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { concatTwoMaskedValues, valueOr } from '../../../../core/utils/types';
 import { AppComponent } from '../../../../app.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+import { SharedModule } from '../../../../shared/shared.module';
+import { ResidencesTableComponent } from '../../components/residences/residences-table.component';
+import { FamilyTableComponent } from '../../components/family-table/family-table.component';
+import { GuardianshipTableComponent } from '../../components/guardianship/guardianship-table.component';
+import { HouseholdTableComponent } from '../../components/household-table/household-table.component';
 
 @Component({
   selector: 'app-person-detail',
   templateUrl: './person-detail.component.html',
   styleUrls: ['./person-detail.component.scss'],
+  standalone: true,
+  imports: [
+    MatToolbar,
+    NgClass,
+    NgSwitch,
+    IconModule,
+    StatusLabelModule,
+    ButtonModule,
+    SkeletonModule,
+    TranslateModule,
+    SharedModule,
+    ExpansionPanelModule,
+    ResidencesTableComponent,
+    FamilyTableComponent,
+    GuardianshipTableComponent,
+    HouseholdTableComponent,
+    NgSwitchCase,
+    NgIf,
+    NgForOf,
+  ],
 })
 export class PersonDetailComponent implements OnInit, OnDestroy {
   private readonly personId: string | null;

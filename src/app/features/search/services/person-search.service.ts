@@ -36,4 +36,8 @@ export class PersonSearchService {
     return this.httpClient.post<SearchResult>(url, searchObj, {params: params.toHttpParams()});
   }
 
+  public getManual(): Observable<string> {
+    const url = `${environment.apiBaseUrl}/auskunft/manual`;
+    return this.httpClient.get<string>(url);
+  }
 }

@@ -278,13 +278,14 @@ export type MaskedNaturalPersonAddonData = {
 export type MaskedNameData = {
   officialName: MaskedValue<string>;
   firstName: MaskedValue<string>;
+  callName: MaskedValue<string>;
   originalName: MaskedValue<string>;
   allianceName: MaskedValue<string>;
   aliasName: MaskedValue<string>;
   otherName: MaskedValue<string>;
-  callName: MaskedValue<string>;
   nameOnForeignPassport: MaskedForeignerName;
   declaredForeignName: MaskedForeignerName;
+  nameValidFrom: MaskedValue<string>;
 };
 export type ResidenceInformationMasked = {
   address: MaskedDwellingAddressV2;
@@ -300,12 +301,14 @@ export type ResidenceInformationViewModel = {
 export type NameDataViewModel = {
   officialName: MaskedValue<string>;
   firstName: MaskedValue<string>;
+  callName: MaskedValue<string>;
   originalName: MaskedValue<string>;
   allianceName: MaskedValue<string>;
   aliasName: MaskedValue<string>;
   otherName: MaskedValue<string>;
-  callName: MaskedValue<string>;
   nameOnForeignPassport: MaskedValue<string>;
+  declaredForeignName: MaskedValue<string>;
+  nameValidFrom: MaskedValue<string>;
 };
 
 export type Relationship = {

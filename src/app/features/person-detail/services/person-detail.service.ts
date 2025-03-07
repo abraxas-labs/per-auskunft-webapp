@@ -121,10 +121,16 @@ export class PersonDetailService {
       },
       nameData: {
         ...dto.person.nameData,
+        nameValidFrom: this.formatDate(dto.person.nameData.nameValidFrom),
         nameOnForeignPassport: concatMaskedValues(
           ' ',
-          dto.person.nameData.nameOnForeignPassport.firstName,
           dto.person.nameData.nameOnForeignPassport.name,
+          dto.person.nameData.nameOnForeignPassport.firstName,
+        ),
+        declaredForeignName: concatMaskedValues(
+          ' ',
+          dto.person.nameData.declaredForeignName.name,
+          dto.person.nameData.declaredForeignName.firstName,
         ),
       },
       placesOfOrigin: dto.person.placesOfOrigin.map((it) => ({

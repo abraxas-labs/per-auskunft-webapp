@@ -132,3 +132,8 @@ export function findTechnicalErrorMessage(response: any): TechnicalError {
   }
   return new TechnicalError("EX_UNDEFINED", "No Defined Message found");
 }
+
+export function findHttpErrorMessage(response: any): string | undefined {
+  const match = response?.error?.match(/EX_\d{5}/);
+  return match ? match[0] : undefined;
+}

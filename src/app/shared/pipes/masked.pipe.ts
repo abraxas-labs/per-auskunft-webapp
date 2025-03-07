@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'masked',
+  standalone: true,
 })
 export class MaskedPipe implements PipeTransform {
   private readonly maskedMessage: string;

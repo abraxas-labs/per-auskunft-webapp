@@ -4,18 +4,14 @@
 </bc-alert-bar>
 <div [ngClass]="{'search-container': isBigOrMediumScreen(), 'search-container-small': isSmallScreen()}">
   <div [ngClass]="{'options-line': isBigOrMediumScreen(), 'options-line-small': isSmallScreen()}">
-    <bc-segmented-control-group
-      [items]='searchOptions'
-      [(value)]='selectedSearchOption'
-      (valueChange)='searchOptionChanged($event)'
-      class='element-margin-top control-group-width'
-    ></bc-segmented-control-group>
-    <bc-checkbox
-      [label]="'search.options.inactive-enabled' | translate"
-      class='element-margin-top-check'
-      (checkedChange)='searchAndUpdateActivity($event)'
-      [hidden]='!withActivePersons'
-    ></bc-checkbox>
+    <div class="switch-wrapper">
+      <p>{{ 'search.options.simple' | translate }}</p>
+      <bc-switch (checkedChange)='searchOptionChanged($event)'></bc-switch>
+    </div>
+    <div *ngIf="withActivePersons" class="switch-wrapper">
+      <p>{{ 'search.options.inactive-enabled' | translate }}</p>
+      <bc-switch (checkedChange)='searchAndUpdateActivity($event)'></bc-switch>
+    </div>
     <bc-dropdown
       [label]="'search.options.affiliation' | translate"
       [items]='affiliationOptions'

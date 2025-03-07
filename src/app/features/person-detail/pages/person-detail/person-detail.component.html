@@ -41,16 +41,20 @@
           <p class='info-box-value'>{{ person.person.nameData.firstName | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.callName' | translate }}</p>
           <p class='info-box-value'>{{ person.person.nameData.callName | masked }}</p>
-          <p class='info-box-label'>{{ 'person-detail.labels.allianceName' | translate }}</p>
-          <p class='info-box-value'>{{ person.person.nameData.allianceName | masked }}</p>
-          <p class='info-box-label'>{{ 'person-detail.labels.nameOnForeignPassport' | translate }}</p>
-          <p class='info-box-value'>{{ person.person.nameData.nameOnForeignPassport | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.originalName' | translate }}</p>
           <p class='info-box-value'>{{ person.person.nameData.originalName | masked }}</p>
-          <p class='info-box-label'>{{ 'person-detail.labels.otherName' | translate }}</p>
-          <p class='info-box-value'>{{ person.person.nameData.otherName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.allianceName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.allianceName | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.aliasName' | translate }}</p>
           <p class='info-box-value'>{{ person.person.nameData.aliasName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.otherName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.otherName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.nameOnForeignPassport' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.nameOnForeignPassport | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.declaredForeignName' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.declaredForeignName | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.nameValidFrom' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nameData.nameValidFrom | masked }}</p>
         </div>
       </div>
     </bc-skeleton>
@@ -63,10 +67,10 @@
         <div class='info-box-grid'>
           <p class='info-box-label'>{{ 'person-detail.labels.status' | translate }}</p>
           <p class='info-box-value'>{{ formatPersonStatus(person.personStatus) }}</p>
-          <p class='info-box-label'>{{ 'person-detail.labels.sex' | translate }}</p>
-          <p class='info-box-value'>{{ person.person.birthData.sexCode | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.ahvn13' | translate }}</p>
           <p class='info-box-value'>{{ person.person.vn | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.sex' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.sexCode | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.dateOfBirth' | translate }}</p>
           <p class='info-box-value'>{{ person.person.birthData.dateOfBirth | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.placeOfBirth' | translate }}</p>

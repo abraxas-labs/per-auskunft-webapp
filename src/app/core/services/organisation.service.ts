@@ -7,7 +7,9 @@ import {
   from,
   map,
   merge,
-  Observable, ReplaySubject, Subject,
+  Observable,
+  ReplaySubject,
+  Subject,
   switchMap,
 } from 'rxjs';
 import { AuthenticationService, AuthorizationService, Tenant } from '@abraxas/base-components';
@@ -65,34 +67,43 @@ export class OrganisationService {
       .pipe(
         map(([orgs, id]) => {
           // Note that we do the following: If the id of the active viewOrganisation is defined we first try to
-          // find the corresponding organisation. If either no id is present or we cannot find the organisation,
-          // we return the first viewOrganisation if one exists.
+          // find the corresponding organisation.
+          // If only 1 viewOrganisation is present, we select this one immediately
+          // If more than 1 viewOrganisations is present the User has to select one
           let res = id && orgs.find(it => it.organisationCode === id);
           if (!res) {
-            res = orgs.length > 0 ? orgs[0] : undefined;
+            res = orgs.length == 1 ? orgs[0] : undefined;
           }
           return res;
         }),
         // Sometimes same value was emitted multiple times. This now prevents this.
-        distinctUntilChanged((previous, current) => previous?.organisationCode === current?.organisationCode)
+        distinctUntilChanged((previous, current) => previous?.organisationCode === current?.organisationCode),
       )
       .subscribe(this._activeViewOrganisation);
 
     combineLatest([this._activeViewOrganisation, this._visibleOrganisations.asObservable()])
       .pipe(
         map(([activeViewOrganisation, visibleOrgs]) => {
-          if(!activeViewOrganisation) {
+          if (!activeViewOrganisation) {
             return visibleOrgs;
           }
           return [activeViewOrganisation,
-            ...visibleOrgs.filter(org => activeViewOrganisation.groupOrganisations.includes(org.organisationCode))]
-        })
+            ...visibleOrgs.filter(org => activeViewOrganisation.groupOrganisations.includes(org.organisationCode))];
+        }),
       )
-      .subscribe(this._reportingMunicipalities)
+      .subscribe(this._reportingMunicipalities);
   }
 
   public viewOrganisations(): Observable<Organisation[]> {
     return this._viewOrganisations;
+  }
+
+  public viewOrganisationsCount(): number | undefined {
+    let counter: number | undefined;
+    this._viewOrganisations.subscribe(result => {
+      counter = result.length;
+    });
+    return counter;
   }
 
   public activeViewOrganisation(): Observable<Organisation | undefined> {

@@ -1,6 +1,13 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { SortDirective, TableDataSource } from '@abraxas/base-components';
-import { DatePipe } from '@angular/common';
+import {
+  ButtonModule,
+  IconModule,
+  SortDirective,
+  StatusLabelModule,
+  TableDataSource,
+  TableModule,
+} from '@abraxas/base-components';
+import { DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { MaskedPipe } from '../../../../shared/pipes/masked.pipe';
 import { mapMasked, MaskedValue, valueOr } from '../../../../core/utils/types';
 import {
@@ -14,7 +21,7 @@ import { CustomRoutingService } from '../../../../shared/services/custom-routing
 import { DialogData } from '../../../common/components/history-selector/history-selector.component';
 import { saveAs as fileSaver } from 'file-saver';
 import { asBlob, generateCsv, mkConfig } from 'export-to-csv';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PermissionService } from '../../../../core/services/permission.service';
 
 export enum TableColumn {
@@ -57,6 +64,19 @@ type SearchResultRow = {
   selector: 'app-search-result-table',
   templateUrl: './search-result-table.component.html',
   styleUrls: ['./search-result-table.component.scss'],
+  standalone: true,
+  imports: [
+    TranslateModule,
+    ButtonModule,
+    TableModule,
+    NgSwitch,
+    IconModule,
+    StatusLabelModule,
+    NgIf,
+    NgForOf,
+    NgSwitchCase,
+    NgSwitchDefault,
+  ],
 })
 export class SearchResultTableComponent implements OnChanges, OnInit {
   @Input()

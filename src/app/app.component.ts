@@ -1,13 +1,38 @@
 import { Component, HostListener } from '@angular/core';
 import { ActiveAndOtherTenants, Organisation, OrganisationService } from './core/services/organisation.service';
-import { catchError, filter, from, map, merge, Observable, of, switchMap, tap } from 'rxjs';
-import { AuthenticationService, AuthorizationService, Tenant } from '@abraxas/base-components';
+import { catchError, filter, from, map, merge, Observable, of, switchMap } from 'rxjs';
+import {
+  AlertBarModule,
+  AppHeaderBarIamModule,
+  AuthenticationService,
+  AuthorizationService,
+  ButtonModule,
+  DropdownModule,
+  IconButtonModule,
+  Tenant,
+} from '@abraxas/base-components';
 import { environment } from '../environments/environment';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { FilesService } from './shared/services/files.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [
+    AppHeaderBarIamModule,
+    DropdownModule,
+    AsyncPipe,
+    AlertBarModule,
+    RouterOutlet,
+    TranslateModule,
+    ButtonModule,
+    NgIf,
+    IconButtonModule,
+  ],
 })
 export class AppComponent {
   private static currentWindowWidth: number = window.innerWidth;
@@ -15,7 +40,7 @@ export class AppComponent {
   public userTenants: Tenant[] = [];
   private authenticated: boolean = false;
   private authenticationDone: boolean = false;
-  public showLabel= environment.showLabel;
+  public showLabel = environment.showLabel;
   public env = environment.env;
   public envColor = environment.envColor;
   private static defaultEnvColor = 'green';
@@ -29,6 +54,7 @@ export class AppComponent {
     private readonly authorizationService: AuthorizationService,
     private readonly authenticationService: AuthenticationService,
     private readonly organisationService: OrganisationService,
+    private readonly filesService: FilesService,
   ) {
     merge(
       this.authenticationService.authenticationChanged.pipe(filter((authenticated) => authenticated)),
@@ -59,10 +85,10 @@ export class AppComponent {
     organisationService
       .viewOrganisations()
       .subscribe(it => {
-        this.viewOrganisations = it.sort((a, b) => a.organisationName.localeCompare(b.organisationName))
+        this.viewOrganisations = it.sort((a, b) => a.organisationName.localeCompare(b.organisationName));
       });
     this.activeViewOrganisationId = organisationService.activeViewOrganisation()
-      .pipe(map(it => it?.organisationCode))
+      .pipe(map(it => it?.organisationCode));
   }
 
   public static get isSmallScreen(): boolean {
@@ -96,11 +122,27 @@ export class AppComponent {
     return this.authenticationDone;
   }
 
+  reloadPage() {
+    window.location.reload();
+  }
+
+  logoClicked($event: MouseEvent) {
+    // Wir wollen die Suchseite neu geladen haben
+    let targetObjects = ['title', 'label', 'logo'];
+    if (window.location.href.indexOf("person")< 0){
+      targetObjects.forEach((element) => {
+        if (($event.target as Element).classList.contains(element)) {
+          this.reloadPage();
+        }
+      })
+    }
+  }
+
   changeAccount() {
     this.authenticationService.logout();
   }
 
-  getEnvColor():string{
+  getEnvColor(): string {
     return this.envColor ? this.envColor : AppComponent.defaultEnvColor;
   }
 
@@ -115,6 +157,31 @@ export class AppComponent {
   }
 
   activeViewOrganisationIdChanged($event: any) {
+    let activeViewOrgId;
+    this.activeViewOrganisationId.subscribe(res => activeViewOrgId = res);
+    if ($event != activeViewOrgId && activeViewOrgId ){
+      this.reloadPage();
+    }
     this.organisationService.setActiveViewOrganisationId($event);
   }
+
+  openPdf() {
+    this.filesService.loadManual().subscribe(
+      response => {
+        const byteCharacters = atob(response);
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+      },
+    );
+  }
+
 }

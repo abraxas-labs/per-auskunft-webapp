@@ -1,8 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { RelatedPersonViewModel } from '../../models/models';
-import { SortDirective, TableDataSource } from '@abraxas/base-components';
+import { ButtonModule, IconModule, SortDirective, TableDataSource, TableModule } from '@abraxas/base-components';
 import { TranslateService } from '@ngx-translate/core';
 import { CustomRoutingService } from '../../../../shared/services/custom-routing.service';
+import { NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 export interface Column {
   title: string;
@@ -31,6 +32,17 @@ export enum TableColumnIds {
   selector: 'app-family-table',
   templateUrl: './family-table.component.html',
   styleUrls: ['./family-table.component.scss'],
+  standalone: true,
+  imports: [
+    TableModule,
+    NgSwitch,
+    IconModule,
+    ButtonModule,
+    NgForOf,
+    NgSwitchCase,
+    NgIf,
+    NgSwitchDefault,
+  ],
 })
 export class FamilyTableComponent implements OnChanges, OnInit {
   @Input()

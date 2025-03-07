@@ -106,14 +106,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
+            "buildTarget": "per-auskunft-webapp:build:local-te",
             "port": 4400
           },
           "configurations": {
             "production": {
-              "browserTarget": "per-auskunft-webapp:build:production"
+              "buildTarget": "per-auskunft-webapp:build:production"
             },
             "development": {
-              "browserTarget": "per-auskunft-webapp:build:development"
+              "buildTarget": "per-auskunft-webapp:build:development"
             },
             "local-te": {
               "buildTarget": "per-auskunft-webapp:build:local-te"
@@ -124,7 +125,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "per-auskunft-webapp:build"
+            "buildTarget": "per-auskunft-webapp:build"
           }
         },
         "test": {

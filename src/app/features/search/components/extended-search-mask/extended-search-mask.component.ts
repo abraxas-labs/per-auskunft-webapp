@@ -1,5 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { MaskOptions } from '@abraxas/base-components';
+import {
+  ButtonModule,
+  DateModule,
+  DropdownModule, MaskedModule,
+  MaskOptions,
+  NumberModule,
+  TextModule,
+} from '@abraxas/base-components';
 import {
   atLeastTwoCharacterValidator,
   wildcardPositionValidator,
@@ -8,7 +15,7 @@ import {
   AbstractControl,
   FormBuilder,
   FormControl,
-  FormGroup,
+  FormGroup, ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
   Validators,
@@ -17,11 +24,26 @@ import {
 import { map, Observable } from 'rxjs';
 import { OrganisationService, Organisation } from '../../../../core/services/organisation.service';
 import { AppComponent } from '../../../../app.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { AsyncPipe, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-extended-search-mask',
   templateUrl: './extended-search-mask.component.html',
   styleUrls: ['./extended-search-mask.component.scss'],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    TextModule,
+    DateModule,
+    ButtonModule,
+    NumberModule,
+    DropdownModule,
+    AsyncPipe,
+    MaskedModule,
+    NgIf,
+  ],
 })
 export class ExtendedSearchMaskComponent {
   @Output()

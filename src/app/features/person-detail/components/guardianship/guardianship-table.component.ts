@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { SortDirective, TableDataSource } from '@abraxas/base-components';
+import { ButtonModule, IconModule, SortDirective, TableDataSource, TableModule } from '@abraxas/base-components';
 import { TranslateService } from '@ngx-translate/core';
 import { MaskedPipe } from '../../../../shared/pipes/masked.pipe';
 import { mapMasked, valueOr } from '../../../../core/utils/types';
 import { dataLockToIcon, sexCodeToIcon } from '../../../../core/utils/commons';
 import { GuardianRelationshipDataViewModel, PersonWithRelationsViewModel } from '../../models/models';
 import { CustomRoutingService } from '../../../../shared/services/custom-routing.service';
+import { NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 export interface Column {
   title: string;
@@ -26,6 +27,17 @@ export enum TableColumnIds {
   selector: 'app-guardianship-table',
   templateUrl: './guardianship-table.component.html',
   styleUrls: ['./guardianship-table.component.scss'],
+  standalone: true,
+  imports: [
+    TableModule,
+    NgSwitch,
+    IconModule,
+    ButtonModule,
+    NgSwitchCase,
+    NgIf,
+    NgForOf,
+    NgSwitchDefault,
+  ],
 })
 export class GuardianshipTableComponent implements OnInit, OnChanges {
   @Input()

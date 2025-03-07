@@ -1,7 +1,8 @@
 import {AfterContentChecked, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from "@angular/material/dialog";
-import {RadioButton} from "@abraxas/base-components";
-import {TranslateService} from "@ngx-translate/core";
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { ButtonModule, DateModule, DialogModule, RadioButton, RadioButtonModule } from '@abraxas/base-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgIf } from '@angular/common';
 
 export interface DialogData {
   selectedHistorySearchType: string;
@@ -16,7 +17,17 @@ export enum HistorySearchType {
 @Component({
   selector: 'app-history-selector',
   templateUrl: './history-selector.component.html',
-  styleUrls: ['./history-selector.component.scss']
+  standalone: true,
+  styleUrls: ['./history-selector.component.scss'],
+  imports: [
+    DialogModule,
+    RadioButtonModule,
+    TranslateModule,
+    DateModule,
+    ButtonModule,
+    MatDialogClose,
+    NgIf,
+  ],
 })
 
 export class HistorySelectorComponent implements OnInit, AfterContentChecked {

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {
   SegmentedControl,
 } from '@abraxas/base-components/lib/components/formfields/segmented-control-group/segmented-control.model';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PersonSearchService } from '../../services/person-search.service';
 import { FullTextSearchAttributes, PersonSearchResult, SearchAttributes } from '../../models/models';
 import { DialogData, HistorySearchType } from '../../../common/components/history-selector/history-selector.component';
@@ -11,6 +11,18 @@ import { PermissionService } from '../../../../core/services/permission.service'
 import { BehaviorSubject, debounceTime, Observable } from 'rxjs';
 import { AppComponent } from '../../../../app.component';
 import { OrganisationService } from '../../../../core/services/organisation.service';
+import {
+  AlertBarModule,
+  CheckboxModule,
+  DropdownModule,
+  SegmentedControlGroupModule,
+  SkeletonModule, SwitchModule,
+} from '@abraxas/base-components';
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { ExtendedSearchMaskComponent } from '../../components/extended-search-mask/extended-search-mask.component';
+import { SimpleSearchMaskComponent } from '../../components/simple-search-mask/simple-search-mask.component';
+import { SearchResultTableComponent } from '../../components/search-result-table/search-result-table.component';
+import { QueryParameterService } from '../../../../core/services/query-parameter.service';
 
 export enum SearchOption {
   Simple,
@@ -26,10 +38,25 @@ export interface DropDownItems {
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
+  standalone: true,
+  imports: [
+    AlertBarModule,
+    NgClass,
+    SegmentedControlGroupModule,
+    CheckboxModule,
+    TranslateModule,
+    DropdownModule,
+    ExtendedSearchMaskComponent,
+    SimpleSearchMaskComponent,
+    SkeletonModule,
+    AsyncPipe,
+    SearchResultTableComponent,
+    NgIf,
+    SwitchModule,
+  ],
 })
 export class SearchComponent {
   public searchOptions: SegmentedControl[];
-  public selectedSearchOption: SearchOption = SearchOption.Simple;
   public affiliationOptions: DropDownItems[];
   public selectedAffiliationOption: string = 'Resident';
   public showExtendedSearchOptions: boolean = true;
@@ -52,7 +79,8 @@ export class SearchComponent {
     private readonly translate: TranslateService,
     private readonly searchService: PersonSearchService,
     private readonly permissionService: PermissionService,
-    private readonly organisationService: OrganisationService
+    private readonly organisationService: OrganisationService,
+    private readonly queryParamService: QueryParameterService
   ) {
     this.searchOptions = [
       {
@@ -90,7 +118,7 @@ export class SearchComponent {
   }
 
   searchOptionChanged($event: any) {
-    this.showExtendedSearchOptions = $event === SearchOption.Extended;
+    this.showExtendedSearchOptions = !$event;
     this.clear();
   }
 
@@ -109,6 +137,12 @@ export class SearchComponent {
 
   search() {
     if (this.isFormValid) {
+
+      if (this.queryParamService.aViewOrganisationHasToBeChosen){
+        this.handleWarning(this.translate.instant('search.header.noViewOrganisation'));
+        return;
+      }
+
       this.clear();
       this.showSearchDescription = false;
       if (this.showExtendedSearchOptions) {
@@ -150,8 +184,8 @@ export class SearchComponent {
         next: (it) => {
           this.results = it.result?.items;
           it.errors?.forEach(warning => {
-            this.hasWarning = true;
-            this.warningMessage = warning});
+            this.handleWarning(warning);
+          });
           this._isLoading.next(false);
         },
         error: (error) => {
@@ -182,8 +216,8 @@ export class SearchComponent {
         next: (it) => {
           this.results = it.result?.items;
           it.errors?.forEach(warning => {
-            this.hasWarning = true;
-            this.warningMessage = warning});
+            this.handleWarning(warning)
+          });
           this._isLoading.next(false);
         },
         error: (error) => {
@@ -196,7 +230,7 @@ export class SearchComponent {
   clear() {
     this.results = undefined;
     this.showSearchDescription = true;
-    this.hasWarning = false;
+    this.handleWarning('');
   }
 
   public isSmallScreen() {
@@ -207,5 +241,9 @@ export class SearchComponent {
     return AppComponent.isBigScreen || AppComponent.isMediumScreen;
   }
 
+  private handleWarning(messageText: string){
+    messageText.length > 0 ? this.hasWarning = true : this.hasWarning = false;
+    this.warningMessage = messageText;
+  }
 
 }
