@@ -26,8 +26,8 @@
 
   <app-extended-search-mask
     *ngIf='showExtendedSearchOptions'
-    (value)='valueUpdate($event)'
     (valid)='validUpdate($event)'
+    (valueExtended)='valueUpdateExtended($event)'
     (startSearch)='search()'
     (clear)='clear()'
   ></app-extended-search-mask>
@@ -42,24 +42,7 @@
 
   <bc-skeleton [loading]='(isLoading | async) === true' [height]="'200px'">
     <div *ngIf="results">
-      <app-search-result-table [data]="results" [historySelector]="historySelector"></app-search-result-table>
-    </div>
-    <div *ngIf='!results && showSearchDescription'>
-      <p class='line-header'>{{ 'search.search-description.title' | translate }}</p>
-      <ul>
-        <div *ngIf='showExtendedSearchOptions'>
-          <li>{{ 'search.search-description.line1' | translate }}</li>
-        </div>
-        <div *ngIf='!showExtendedSearchOptions'>
-          <li>{{ 'search.search-description.line1_Simple' | translate }}</li>
-        </div>
-        <li>{{ 'search.search-description.line2' | translate }}</li>
-        <li>{{ 'search.search-description.line3' | translate }}</li>
-        <li>{{ 'search.search-description.line4' | translate }}</li>
-        <li>{{ 'search.search-description.line5' | translate }}</li>
-        <li>{{ 'search.search-description.line6' | translate }}</li>
-        <li>{{ 'search.search-description.line7' | translate }}</li>
-      </ul>
+      <app-search-result-table [data]="results"></app-search-result-table>
     </div>
   </bc-skeleton>
 </div>

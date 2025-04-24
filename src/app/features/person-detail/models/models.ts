@@ -4,9 +4,11 @@ import {MaskedDwellingAddressV2, NamedPersonId} from '../../../core/models/model
 export type MartialInfoViewModel = {
   maritalStatusCode: MaskedValue<string>;
   dateOfMaritalStatus: MaskedValue<string>;
+  officialProofOfMaritalStatusYesNo: MaskedValue<string>;
   cancellationReasonCode: MaskedValue<string>;
   separationCode: MaskedValue<string>;
   separationValidFrom: MaskedValue<string>;
+  separationValidTill: MaskedValue<string>;
 };
 export type MaskedForeignerName = {
   name: MaskedValue<string>;
@@ -17,7 +19,9 @@ export type BirthDataViewModel = {
   placeOfBirth: GeneralPlaceViewModel;
   sexCode: MaskedValue<string>;
   nameOfFather: MaskedValue<string>;
+  officialProofOfNameFather: MaskedValue<string>;
   nameOfMother: MaskedValue<string>;
+  officialProofOfNameMother: MaskedValue<string>;
 };
 export type MaskedBirthData = {
   dateOfBirth: MaskedValue<string>;
@@ -189,8 +193,16 @@ export type MaskedResidenceDwellingData = {
   residenceCode: string;
   residenceData: MaskedResidenceData;
   dwellingInformation: MaskedDwellingInformation;
+  contactData: MaskedContactData;
 }
-
+export type MaskedContactData = {
+  contactAddress: MaskedContactAddress;
+};
+export type MaskedContactAddress = {
+  organisation: MaskedOrganisationMailAddressInfo;
+  person: MaskedPersonMailAddressInfo;
+  addressInformation: MaskedAddressInformation;
+}
 export type MaskedPartnerIdOrganisationData = {
   localPersonId: MaskedValue<NamedPersonId>;
   otherPersonId: MaskedValue<NamedPersonId[]>;
@@ -266,6 +278,7 @@ export type RelatedPersonViewModel = {
 export type AdditionalDataViewModel = {
   dateOfDeath: MaskedValue<string>;
   dateOfMissing: MaskedValue<string>;
+  placeOfDeath: MaskedValue<string>;
   languageOfCorrespondence: MaskedValue<string>;
   restrictedVotingAndElectionRightFederation: MaskedValue<string>;
   lock: MaskedValue<string>;
@@ -295,7 +308,7 @@ export type ResidenceInformationMasked = {
 };
 export type ResidenceInformationViewModel = {
   address: MaskedDwellingAddressV2;
-  reportingOrganisationNameAndCanton: MaskedValue<string>;
+  reportingOrganisationName: MaskedValue<string>;
   residences: MaskedValue<string>;
 };
 export type NameDataViewModel = {
@@ -365,6 +378,7 @@ export type NaturalPersonDTO = {
   nameData: MaskedNameData;
   naturalPersonAddonData: MaskedNaturalPersonAddonData;
   birthData: MaskedBirthData;
+  contactData: MaskedContactData;
   placesOfOrigin: MaskedPlaceOfOriginData[];
   religionData: MaskedReligion;
   residencePermitData: MaskedResidencePermitData;
@@ -406,7 +420,7 @@ export type PersonWithRelationsDTO = {
   residenceInformationMasked: ResidenceInformationMasked;
   personStatus: number;
   personEvalDate: string;
-  hasLock: MaskedValue<boolean>;
+  lockValue: MaskedValue<number>;
 };
 export type PersonWithRelationsViewModel = {
   person: NaturalPersonViewModel;
@@ -415,15 +429,15 @@ export type PersonWithRelationsViewModel = {
   residenceInformationView: ResidenceInformationViewModel;
   personStatus: number;
   personEvalDate: string;
-  hasLock: MaskedValue<boolean>;
+  lockValue: MaskedValue<number>;
 };
 export type HouseholdMember = {
   perId: string;
   egId: MaskedValue<string>;
   ewId: MaskedValue<string>;
-  householdType: MaskedValue<string>;
   nameData: MaskedNameData;
   dateOfBirth: MaskedValue<string>;
   sexCode: MaskedValue<string>;
   hasLock: MaskedValue<boolean>;
+  residenceType: MaskedValue<number>;
 };

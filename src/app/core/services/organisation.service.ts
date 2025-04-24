@@ -15,6 +15,7 @@ import {
 import { AuthenticationService, AuthorizationService, Tenant } from '@abraxas/base-components';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { AppComponent } from '../../app.component';
 
 export type Organisation = {
   organisationCode: string;
@@ -28,8 +29,6 @@ export type ActiveAndOtherTenants = {
   activeTenant: Tenant;
   userTenants: Tenant[];
 };
-
-const LOCAL_STORAGE_KEY = 'activeViewOrganisationId';
 
 @Injectable({
   providedIn: 'root',
@@ -57,7 +56,7 @@ export class OrganisationService {
       this.authorizationService.activeTenantChanged,
     ).subscribe(() => this.loadViewOrganisations());
 
-    let id = localStorage.getItem(LOCAL_STORAGE_KEY) ?? undefined;
+    let id = localStorage.getItem(AppComponent.LOCAL_STORAGE_KEY) ?? undefined;
     this._activeViewOrganisationId = new BehaviorSubject<string | undefined>(id);
 
     this._viewOrganisations = combineLatest([this._visibleOrganisations.asObservable(), this._viewOrganisationIds.asObservable()])
@@ -98,8 +97,8 @@ export class OrganisationService {
     return this._viewOrganisations;
   }
 
-  public viewOrganisationsCount(): number | undefined {
-    let counter: number | undefined;
+  public viewOrganisationsCount(): number {
+    let counter: number = 0;
     this._viewOrganisations.subscribe(result => {
       counter = result.length;
     });
@@ -115,12 +114,6 @@ export class OrganisationService {
   }
 
   public setActiveViewOrganisationId(organisationCode?: string) {
-
-    if (organisationCode) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, organisationCode);
-    } else {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-    }
     this._activeViewOrganisationId.next(organisationCode);
   }
 

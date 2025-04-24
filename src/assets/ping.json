@@ -1,0 +1,6 @@
+{
+  "applicationName": "${CLIENT_ID}",
+  "imageVersion": "${IMAGE_VERSION}",
+  "deploymentTime": "${DEPLOYMENT_TIME}",
+  "environmentName": "${ENV}"
+}

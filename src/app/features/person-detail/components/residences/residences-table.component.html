@@ -45,6 +45,11 @@
             <p>{{addressData}}</p>
           </div>
         </div>
+        <div *ngSwitchCase='TableColumnIds.CONTACT_ADDRESS'>
+          <div class='residence-wrapper' *ngFor='let contactAddressData of row[TableColumnIds.CONTACT_ADDRESS]'>
+            <p>{{contactAddressData}}</p>
+          </div>
+        </div>
         <div *ngSwitchCase='TableColumnIds.GOES_TO_ADDRESS'>
           <div class='residence-wrapper' *ngFor='let addressData of row[TableColumnIds.GOES_TO_ADDRESS]'>
             <p>{{addressData}}</p>

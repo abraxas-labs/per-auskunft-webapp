@@ -49,6 +49,7 @@ export class AppComponent {
   public isBigScreen = true;
   public viewOrganisations: Organisation[] = [];
   public activeViewOrganisationId: Observable<string | undefined>;
+  public static LOCAL_STORAGE_KEY = 'activeViewOrganisationId';
 
   constructor(
     private readonly authorizationService: AuthorizationService,
@@ -123,16 +124,21 @@ export class AppComponent {
   }
 
   reloadPage() {
+    localStorage.removeItem(AppComponent.LOCAL_STORAGE_KEY);
+    this.windowLocationReload();
+  }
+
+  windowLocationReload(){
     window.location.reload();
   }
 
   logoClicked($event: MouseEvent) {
     // Wir wollen die Suchseite neu geladen haben
-    let targetObjects = ['title', 'label', 'logo'];
+    let targetObjects = ['title', 'label', 'logo', 'link'];
     if (window.location.href.indexOf("person")< 0){
       targetObjects.forEach((element) => {
         if (($event.target as Element).classList.contains(element)) {
-          this.reloadPage();
+          this.windowLocationReload();
         }
       })
     }
@@ -157,11 +163,17 @@ export class AppComponent {
   }
 
   activeViewOrganisationIdChanged($event: any) {
+
+    if ($event) {
+      localStorage.setItem(AppComponent.LOCAL_STORAGE_KEY, $event);
+    }
+
     let activeViewOrgId;
     this.activeViewOrganisationId.subscribe(res => activeViewOrgId = res);
     if ($event != activeViewOrgId && activeViewOrgId ){
-      this.reloadPage();
+      this.windowLocationReload();
     }
+
     this.organisationService.setActiveViewOrganisationId($event);
   }
 

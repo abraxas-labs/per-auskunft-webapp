@@ -8,9 +8,13 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { atLeastTwoCharacterValidator, wildcardPositionValidator } from '../../../../core/utils/commons';
+import {
+  atLeastTwoCharacterValidator,
+  notAllowedCharsValidator,
+  ValidationError,
+} from '../../../../core/utils/commons';
 import { AppComponent } from '../../../../app.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgClass } from '@angular/common';
 import { ButtonModule, SearchModule } from '@abraxas/base-components';
 
@@ -41,9 +45,10 @@ export class SimpleSearchMaskComponent {
   clear = new EventEmitter<void>();
 
   public form: FormGroup;
-  private blockStartSearchEmit : boolean = false;
 
-  constructor(private readonly formBuilder: FormBuilder) {
+  constructor(private readonly formBuilder: FormBuilder,
+              private readonly translate: TranslateService) {
+
     this.form = this.formBuilder.group({
       simpleSearch: new FormControl(null, [this.simpleSearchValidator]),
     });
@@ -60,67 +65,40 @@ export class SimpleSearchMaskComponent {
     this.clear.emit();
   }
 
-  /*
-    Taste "Enter" löst "handleSearchButton" und "handleSearchField" in dieser Reihenfolge aus.
-    Mittels "blockSearchEmit" unterdrücken wir den 2ten Event, damit nicht 2 Suchen abgesetzt werden.
-    Etwas unschön, sollte eigentlich über event.preventDefault funktionieren.
-   */
-  handleSearchButton($event: PointerEvent) {
-    this.blockStartSearchEmit = $event.pointerType != 'mouse';
-    this.startSearch.emit();
-  }
-
   handleSearchField() {
-    if (this.blockStartSearchEmit) {
-      this.blockStartSearchEmit = false;
-    } else {
-      this.startSearch.emit();
-    }
+    this.startSearch.emit();
   }
 
   private simpleSearchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
 
     if (!control.value) {
-      return { message: 'The searchField may not be empty' };
+      return {
+        message: 'The searchField may not be empty',
+        errorCode: 'noEmptySearchField',
+      } as ValidationError;
     }
 
     let validationResult = atLeastTwoCharacterValidator(control);
     if (validationResult != null) {
       return validationResult;
     }
-
-    validationResult = wildcardPositionValidator(control);
-    if (validationResult != null) {
-      return validationResult;
-    }
-
-    // Keine Wildcards für numerische Werte
-    return this.noWildcardsValidator(control);
+    return notAllowedCharsValidator(control);
   };
 
-  private noWildcardsValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) return null;
-
-    for (let item of control.value?.split(' ')) {
-      // Wenn Ziffer in Suchterm vorkommt, dürfen keine Wildcards drin sein.
-      // Beispiele für ungültige Werte:
-      // 1965-05-?6
-      // 756.23*.234.2342
-      // 13?
-      if (item.match(/\d+/g) && (item.includes('*') || item.includes('?'))) {
-        return { message: 'No Wildcards allowed here' };
-      }
+  showValidationError() {
+    const errorControl = 'simpleSearch';
+    if (this.form?.controls[errorControl]?.errors?.['errorCode'] && this.form?.controls[errorControl]?.dirty) {
+      return this.translate.instant('search.validation.' + this.form?.controls[errorControl]?.errors?.['errorCode']);
     }
-
-    return null;
-  };
-
-  public isSmallScreen() {
-    return AppComponent.isSmallScreen;
+    return '';
   }
 
-  public isBigOrMediumScreen() {
-    return AppComponent.isBigScreen || AppComponent.isMediumScreen;
+  public isSmallScreenOrMediumScreen() {
+    return AppComponent.isSmallScreen || AppComponent.isMediumScreen;
+  }
+
+  public isBigScreen() {
+    return AppComponent.isBigScreen;
   }
 
 }

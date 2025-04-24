@@ -1,7 +1,11 @@
-import {MaskedValue} from './types';
-import {AbstractControl, ValidationErrors, ValidatorFn} from "@angular/forms";
-import * as moment from "moment/moment";
-import {HistorySearchType} from "../../features/common/components/history-selector/history-selector.component";
+import { MaskedValue } from './types';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import * as moment from 'moment/moment';
+
+export type ValidationError = {
+  message: string | undefined;
+  errorCode: string | undefined;
+}
 
 export function sexCodeToIcon(sexCode: MaskedValue<string>): string | undefined {
   if (sexCode.type === 'Masked') {
@@ -14,7 +18,7 @@ export function sexCodeToIcon(sexCode: MaskedValue<string>): string | undefined 
     case '2':
       return 'venus';
     case '3':
-      return 'transgender';
+      return 'question-circle-o';
     default:
       return undefined;
   }
@@ -30,52 +34,71 @@ export function dataLockToIcon(hasLock: MaskedValue<boolean>): string | undefine
   return '';
 }
 
-export const wildcardPositionValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+
+export const notAllowedCharsValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   if (typeof control.value !== 'string') {
     return null;
   }
+  // Gleiche Validierung wie auf Server --> SearchUtils.checkSearchCriterium
+  const SPACE_CHAR = 32;
+  const TAB_CHAR = 9;
 
-  const searchWordsArray = control.value?.trim().split(" ");
-  for (const singleWord of searchWordsArray) {
-
-    let countStars = singleWord?.split('*').length -1;
-    if (countStars > 1){
-      return {message: 'Only one star wildcard (*) per search allowed'};
-    }
-    if (singleWord?.startsWith('*')){
-      return {message: 'No star (*) wildcard allowed at start of search term'};
+  const searchString = control.value?.trim();
+  for (let i = 0; i < searchString?.length; i++) {
+    const charCodeAt = searchString?.charCodeAt(i);
+    if (charCodeAt < SPACE_CHAR && charCodeAt != TAB_CHAR) {
+      return {
+        message: 'There are not allowed Characters in SearchTerm',
+        errorCode: 'notAllowedCharacters',
+      } as ValidationError;
     }
   }
+  return null;
+};
 
-  if (control.value?.match('(?:\\?\\*)')) {
-    return {message: 'No Star after question mark'};
+export const onlyDigitsValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  if (typeof control.value !== 'string') {
+    return null;
   }
-
+  const DIGIT_ZERO = 48;
+  const DIGIT_NINE = 57;
+  const searchString = control.value?.trim();
+  for (let i = 0; i < searchString?.length; i++) {
+    const charCodeAt = searchString?.charCodeAt(i);
+    if (charCodeAt < DIGIT_ZERO || charCodeAt > DIGIT_NINE) {
+      return {
+        message: 'only Digits allowed',
+        errorCode: 'onlyDigitsAllowed',
+      } as ValidationError;
+    }
+  }
   return null;
 };
 
 export const atLeastTwoCharacterValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-
   if (typeof control.value !== 'string' || !control.value) {
-      return null;
+    return null;
   }
-
-  const withoutWildcards =  control.value?.trim().replace('*','').replace('?','');
-  if (withoutWildcards.length < 2){
-    return {message: 'At least 2 characters in a search string'};
+  const withoutWildcards = getSearchStringWithoutWildcards(control.value);
+  if (withoutWildcards.length < 2) {
+    return { message: 'At least 2 characters in a search string', errorCode: 'atLeast2Characters' } as ValidationError;
   }
-
-  const searchWordsArray = control.value?.trim().split(" ");
-  for (const singleWord of searchWordsArray) {
-    if (singleWord?.trim().includes('*') || singleWord?.trim().includes('?')){
-      const stringWithoutWildcards =  singleWord?.trim().replace('*','').replace('?','');
-      if (stringWithoutWildcards.length < 2){
-        return {message: 'At least 2 characters in a search string'};
-      }
-    }
-  }
-
   return null;
+};
+
+export const noWildcardsValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  if (typeof control.value !== 'string') {
+    return null;
+  }
+  if (control.value?.includes('*') || control.value?.includes('?')) {
+    return { message: 'No Wildcards allowed here', errorCode: 'noWildcards' };
+  }
+  return null;
+};
+
+function getSearchStringWithoutWildcards(search: string): string {
+  // Alternative zu ReplaceAll
+  return search.trim().split('*').join('').split('?').join('');
 }
 
 export function getTodayAsUTCString(): string {
@@ -84,13 +107,6 @@ export function getTodayAsUTCString(): string {
 
 export function getEvalDateAsUTCString(date: Date): string {
   return new Date(date).toISOString().slice(0, 10);
-}
-
-export function getValidFromAsUTCString(date: Date, historySearchType: any): string {
-  if (historySearchType === HistorySearchType.QUALIFYING_DATE) {
-    return getEvalDateAsUTCString(date);
-  }
-  return getTodayAsUTCString();
 }
 
 export function getDateFromUTCString(utcDate: string): Date {
@@ -107,7 +123,7 @@ export function getDateAsString(date: Date): string {
 
 export class TechnicalError extends Error {
   constructor(message: string, public readonly code: string) {
-    super(message)
+    super(message);
   }
 }
 
@@ -126,11 +142,11 @@ export function findTechnicalErrorMessage(response: any): TechnicalError {
   //
   const errorString = response?.error?.error;
 
-  if(typeof errorString === 'string' && errorString.startsWith("EX_")) {
-    const parts = errorString.split(":");
+  if (typeof errorString === 'string' && errorString.startsWith('EX_')) {
+    const parts = errorString.split(':');
     return new TechnicalError(parts[0], parts[1]);
   }
-  return new TechnicalError("EX_UNDEFINED", "No Defined Message found");
+  return new TechnicalError('EX_UNDEFINED', 'No Defined Message found');
 }
 
 export function findHttpErrorMessage(response: any): string | undefined {

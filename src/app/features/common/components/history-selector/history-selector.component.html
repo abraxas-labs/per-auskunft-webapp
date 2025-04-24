@@ -1,38 +1,33 @@
-<div *ngIf="historySelector">
-    <bc-dialog>
-        <div class="container">
-            <p class="line-header">{{ 'person-detail.historySearch.title' | translate }}</p>
-            <p class="line-detail">{{ 'person-detail.historySearch.text1' | translate }}</p>
-            <p class="line-detail">{{ 'person-detail.historySearch.text2' | translate }}</p>
-            <p class="line-detail"></p>
-
-            <bc-radio-button-group class="radio-group"
-                                   [items]="radiogroup"
-                                   orientation="vertical"
-                                   [(value)]="historySelector['selectedHistorySearchType']"
-            ></bc-radio-button-group>
-
-            <div>
-                <bc-date
-                        [appearance]="'outline'"
-                        [width]="'300px'"
-                        [clearable]="true"
-                        [disabled]="data.selectedHistorySearchType === HistorySearchType.CURRENT_DATE"
-                        [required]="true"
-                        [(value)]="historySelector['selectedHistoryDate']"
-                ></bc-date>
-            </div>
-
-        </div>
-        <div class="button-container">
-            <bc-button mat-dialog-close color="primary"
-                       [label]="'person-detail.historySearch.button_cancel' | translate"
-                       variant="tertiary"></bc-button>
-            <bc-button color="primary"
-                       [label]="'person-detail.historySearch.button_ok' | translate"
-                       [disabled]="!data.selectedHistoryDate && data.selectedHistorySearchType === HistorySearchType.QUALIFYING_DATE"
-                       [mat-dialog-close]="historySelector"
-                       variant="primary"></bc-button>
-        </div>
-    </bc-dialog>
-</div>
+<bc-dialog>
+  <form [formGroup]='form'>
+    <div class="container">
+      <p class="line-header">{{ 'person-detail.historySearch.title' | translate }}</p>
+      <p class="line-detail">{{ 'person-detail.historySearch.text1' | translate }}</p>
+      <p class="line-detail">{{ 'person-detail.historySearch.text2' | translate }}</p>
+      <p class="line-detail"></p>
+      <bc-radio-button-group class="radio-group"
+                             [items]="radioGroup"
+                             orientation="vertical"
+                             [formControlName]="'dateType'"
+      ></bc-radio-button-group>
+      <div>
+        <bc-date
+          [width]="'300px'"
+          [validation] = "true"
+          [clearable]="true"
+          [formControlName]="'selectedDate'"
+        ></bc-date>
+      </div>
+    </div>
+  </form>
+  <div class="button-container">
+    <bc-button mat-dialog-close color="primary"
+               [label]="'person-detail.historySearch.button_cancel' | translate"
+               variant="tertiary"></bc-button>
+    <bc-button color="primary"
+               [label]="'person-detail.historySearch.button_ok' | translate"
+               (buttonClick)="onSubmit()"
+               [disabled] = "form.invalid"
+               variant="primary"></bc-button>
+  </div>
+</bc-dialog>

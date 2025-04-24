@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import {
+  MaskedContactAddress,
   MaskedDestination,
   MaskedDwellingAddress,
   MaskedResidenceDwellingData,
@@ -18,13 +19,14 @@ export interface Column {
 
 export enum TableColumnIds {
   RESIDENCE_CODE = 'residenceCode',
-  ARRIVAL_DATE = 'arrivalDate',
-  MOVING_DATE = 'movingDate',
-  DEPARTURE_DATE = 'departureDate',
   MUNICIPALITY_WITH_CANTON_ABBREVIATION = 'municipalityWithCantonAbbreviation',
   ADDRESS = 'address',
   DOMICILE_DATA = 'domicileData',
+  MOVING_DATE = 'movingDate',
+  CONTACT_ADDRESS = 'contactAddress',
+  ARRIVAL_DATE = 'arrivalDate',
   COMES_FROM_TOWN = 'comesFromTown',
+  DEPARTURE_DATE = 'departureDate',
   GOES_TO_ADDRESS = 'goesToAddress'
 }
 
@@ -53,13 +55,14 @@ export class ResidencesTableComponent implements OnInit, OnChanges {
   columns: Column[] = [];
   columnsToDisplay: string[] = [
     TableColumnIds.RESIDENCE_CODE,
-    TableColumnIds.ARRIVAL_DATE,
-    TableColumnIds.MOVING_DATE,
-    TableColumnIds.DEPARTURE_DATE,
     TableColumnIds.MUNICIPALITY_WITH_CANTON_ABBREVIATION,
     TableColumnIds.ADDRESS,
     TableColumnIds.DOMICILE_DATA,
+    TableColumnIds.MOVING_DATE,
+    TableColumnIds.CONTACT_ADDRESS,
+    TableColumnIds.ARRIVAL_DATE,
     TableColumnIds.COMES_FROM_TOWN,
+    TableColumnIds.DEPARTURE_DATE,
     TableColumnIds.GOES_TO_ADDRESS,
   ];
 
@@ -86,13 +89,14 @@ export class ResidencesTableComponent implements OnInit, OnChanges {
       this.dataSource.data = this.person.residenceData.map(
         (it: MaskedResidenceDwellingData) => ({
           residenceCode: it.residenceCode,
-          arrivalDate: this.maskedPipe.transform(it.residenceData.arrivalDate),
-          movingDate: this.maskedPipe.transform(it.residenceData.dwellingAddresses.movingDate),
-          departureDate: this.maskedPipe.transform(it.residenceData.departureDate),
-          municipalityWithCantonAbbreviation: this.maskedPipe.transform(this.formatMunicipalityWithCantonAbbreviation(it.residenceData.reportingMunicipality.municipalityName, it.residenceData.reportingMunicipality.cantonAbbreviation, false)),
+          municipalityWithCantonAbbreviation: this.maskedPipe.transform(it.residenceData.reportingMunicipality.municipalityName),
           address: this.formatAddress(it.residenceData.dwellingAddresses),
-          domicileData: this.formatDomicile(it.residenceData.dwellingAddresses.typeOfHouseholdCode, it.dwellingInformation.floor, it.dwellingInformation.locationOfDwellingOnFloor, it.dwellingInformation.noOfHabitableRooms),
+          domicileData: this.formatDomicile(it.residenceData.dwellingAddresses.egid, it.residenceData.dwellingAddresses.ewid, it.residenceData.dwellingAddresses.typeOfHouseholdCode, it.dwellingInformation.floor, it.dwellingInformation.locationOfDwellingOnFloor, it.dwellingInformation.noOfHabitableRooms),
+          movingDate: this.maskedPipe.transform(it.residenceData.dwellingAddresses.movingDate),
+          contactAddress: this.formatContactAddress(it.contactData.contactAddress),
+          arrivalDate: this.maskedPipe.transform(it.residenceData.arrivalDate),
           comesFromTown: this.formatComesFrom(it.residenceData.comesFrom),
+          departureDate: this.maskedPipe.transform(it.residenceData.departureDate),
           goesToAddress: this.formatGoesTo(it.residenceData.goesTo),
         }),
       );
@@ -100,21 +104,24 @@ export class ResidencesTableComponent implements OnInit, OnChanges {
     }
   }
 
-  public postFormatDate(date: string): string | null{
+  public postFormatDate(date: string): string | null {
     try {
-      return this.datePipe.transform(date, 'dd.MM.yyyy')
+      return this.datePipe.transform(date, 'dd.MM.yyyy');
     } catch (e) {
       return date;
     }
   }
 
   private formatDomicile(
+    egId: MaskedValue<number>,
+    ewId: MaskedValue<number>,
     typeOfHouseholdCode: MaskedValue<string>,
     floor: MaskedValue<string>,
     locationOfDwellingOnFloor: MaskedValue<string>,
     noOfHabitableRooms: MaskedValue<string>,
   ): string[] {
     return this.unmaskList([
+      this.getEgidEwid(egId, ewId),
       this.getTypeOfHousehold(typeOfHouseholdCode),
       this.getFloor(floor),
       locationOfDwellingOnFloor,
@@ -127,23 +134,80 @@ export class ResidencesTableComponent implements OnInit, OnChanges {
     if (address === undefined) return [];
     return this.unmaskList([
       address.address.addressLine1,
+      address.address.addressLine2,
       concatMaskedValues(' ', address.address.street, address.address.houseNumber),
       concatMaskedValues(' ', address.address.swissZipCode, address.address.town),
     ]);
   }
 
+  private formatContactAddress(
+    contactAddress: MaskedContactAddress | undefined,
+  ): any[] {
+    if (contactAddress === undefined) return [];
+    return this.unmaskList([
+      contactAddress.organisation.organisationName,
+      contactAddress.organisation.organisationNameAddOn1,
+      contactAddress.organisation.organisationNameAddOn2,
+      concatMaskedValues(' ',
+        this.findCorrectMrMrsCode(contactAddress.person.mrMrsCode, contactAddress.organisation.mrMrsCode),
+        this.findCorrect(contactAddress.person.title, contactAddress.organisation.title),
+        this.findCorrect(contactAddress.person.firstName, contactAddress.organisation.firstName),
+        this.findCorrect(contactAddress.person.lastName, contactAddress.organisation.lastName)),
+      contactAddress.addressInformation.addressLine1,
+      contactAddress.addressInformation.addressLine2,
+      concatMaskedValues(' ', contactAddress.addressInformation.street, contactAddress.addressInformation.houseNumber),
+      contactAddress.addressInformation.dwellingNumber,
+      concatMaskedValues(' ', contactAddress.addressInformation.postOfficeBoxText, contactAddress.addressInformation.postOfficeBoxNumber),
+      contactAddress.addressInformation.locality,
+      concatMaskedValues(' ', this.findCorrect(contactAddress.addressInformation.swissZipCode, contactAddress.addressInformation.foreignZipCode), contactAddress.addressInformation.town),
+      contactAddress.addressInformation.country,
+    ]);
+  }
+
+  private translateMrMrsCode(code: MaskedValue<string>): MaskedValue<string> {
+    if (code.type === 'Value' && code.value !== undefined) {
+      switch (code.value) {
+        case '1':
+          return value(this.translate.instant('person-detail.mrMrsCode.1'));
+        case '2':
+          return value(this.translate.instant('person-detail.mrMrsCode.2'));
+        case '3':
+          return value(this.translate.instant('person-detail.mrMrsCode.3'));
+      }
+    }
+    return code;
+  }
+
+  private findCorrectMrMrsCode(a: MaskedValue<string>,
+                               b: MaskedValue<string>) {
+    return this.translateMrMrsCode(this.findCorrect(a, b));
+  }
+
+  private findCorrect(
+    a: MaskedValue<string>,
+    b: MaskedValue<string>,
+  ): MaskedValue<any> {
+    if (a.type === 'Value' && a.value !== undefined) {
+      return a;
+    }
+
+    if (b.type === 'Value' && b.value !== undefined) {
+      return b;
+    }
+    return a;
+  }
+
   private formatMunicipalityWithCantonAbbreviation(
     municipalityName: MaskedValue<string>,
     cantonAbbreviation: MaskedValue<string>,
-    tailingComma: boolean
-
+    tailingComma: boolean,
   ): MaskedValue<string> {
     return concatMaskedValues(' ', municipalityName, this.formatCantonAbbreviation(cantonAbbreviation, tailingComma));
   }
 
   private formatCantonAbbreviation(
     municipalityId: MaskedValue<string>,
-    tailingComma: boolean
+    tailingComma: boolean,
   ): MaskedValue<string> {
     if (municipalityId.type === 'Masked' || municipalityId.value === undefined) return municipalityId;
     const val = tailingComma ? municipalityId.value + ',' : municipalityId.value;
@@ -157,6 +221,7 @@ export class ResidencesTableComponent implements OnInit, OnChanges {
     return this.unmaskList([
       this.formatGeneralPlace(destination, false),
       destination.mailAddress.addressLine1,
+      destination.mailAddress.addressLine2,
       concatMaskedValues(' ', destination.mailAddress.street, destination.mailAddress.houseNumber),
       concatMaskedValues(' ', this.findZipCode(destination.mailAddress.swissZipCode, destination.mailAddress.foreignZipCode), destination.mailAddress.town),
       destination.mailAddress.locality,
@@ -301,6 +366,17 @@ export class ResidencesTableComponent implements OnInit, OnChanges {
       return [this.maskedPipe.transform(maskedList[0])];
     }
     return maskedList.filter(it => (it.type === 'Value' && it.value !== undefined)).map(it => this.maskedPipe.transform(it));
+  }
+
+  private getEgidEwid(
+    egId: MaskedValue<number>,
+    ewId: MaskedValue<number>,
+  ) {
+    if (!egId || !ewId) return undefined;
+    if ((egId.type !== 'Masked' && egId.value !== undefined) && (ewId.type !== 'Masked' && ewId.value !== undefined)) {
+      return value(egId.value + ', ' + ewId.value);
+    }
+    return egId + ', ' + ewId;
   }
 
   protected readonly TableColumnIds = TableColumnIds;

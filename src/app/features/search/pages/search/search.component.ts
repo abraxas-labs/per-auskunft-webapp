@@ -4,9 +4,11 @@ import {
 } from '@abraxas/base-components/lib/components/formfields/segmented-control-group/segmented-control.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PersonSearchService } from '../../services/person-search.service';
-import { FullTextSearchAttributes, PersonSearchResult, SearchAttributes } from '../../models/models';
-import { DialogData, HistorySearchType } from '../../../common/components/history-selector/history-selector.component';
-import { findTechnicalErrorMessage, getValidFromAsUTCString } from '../../../../core/utils/commons';
+import { ExtendedSearchDTO, FullTextSearchAttributes, PersonSearchResult } from '../../models/models';
+import {
+  findTechnicalErrorMessage,
+  getTodayAsUTCString,
+} from '../../../../core/utils/commons';
 import { PermissionService } from '../../../../core/services/permission.service';
 import { BehaviorSubject, debounceTime, Observable } from 'rxjs';
 import { AppComponent } from '../../../../app.component';
@@ -65,15 +67,13 @@ export class SearchComponent {
 
   public results?: PersonSearchResult[];
   public isLoading: Observable<boolean>;
-  public historySelector: DialogData | undefined;
   public withActivePersons = true;
-  public showSearchDescription = true;
   private _isLoading = new BehaviorSubject<boolean>(false);
   private searchValue: any;
-  private selectedHistoryDate: Date = new Date();
-  private selectedHistorySearchType: HistorySearchType = HistorySearchType.CURRENT_DATE;
+  private searchElements: any;
   public hasWarning: boolean = false;
   public warningMessage: string = '';
+  private readonly defaultEvalDate = getTodayAsUTCString();
 
   constructor(
     private readonly translate: TranslateService,
@@ -102,11 +102,6 @@ export class SearchComponent {
       },
     ];
 
-    this.historySelector = {
-      selectedHistorySearchType: this.selectedHistorySearchType,
-      selectedHistoryDate: this.selectedHistoryDate,
-    };
-
     this.permissionService.permission().subscribe({
       next: (it) => {
         this.withActivePersons = it.accessToInactiveResidents;
@@ -126,6 +121,10 @@ export class SearchComponent {
     this.searchValue = $event;
   }
 
+  valueUpdateExtended($event: any){
+    this.searchElements = $event;
+  }
+
   validUpdate($event: boolean) {
     this.isFormValid = $event;
   }
@@ -138,13 +137,12 @@ export class SearchComponent {
   search() {
     if (this.isFormValid) {
 
-      if (this.queryParamService.aViewOrganisationHasToBeChosen){
+      if (this.showWarningNoViewOrganisationChosen()){
         this.handleWarning(this.translate.instant('search.header.noViewOrganisation'));
         return;
       }
 
       this.clear();
-      this.showSearchDescription = false;
       if (this.showExtendedSearchOptions) {
         this.searchExtended();
       } else {
@@ -153,33 +151,22 @@ export class SearchComponent {
     }
   }
 
-  searchExtended() {
-    const searchAttributes: SearchAttributes = {
-      name: this.searchValue.name,
-      firstName: this.searchValue.firstName,
-      allianceName: this.searchValue.allianceName,
-      dateOfBirth: this.searchValue.dateOfBirth,
-      street: this.searchValue.street,
-      houseNumber: this.searchValue.houseNumber,
-      zipCode: this.searchValue.zipCode,
-      town: this.searchValue.town,
-      reportingMunicipalityCode: this.searchValue.reportingMunicipality,
-      vn: this.searchValue.vn,
-      id: this.searchValue.id,
-      activeOnly: !this.includeInactive,
-      evalDate: getValidFromAsUTCString(this.selectedHistoryDate, this.selectedHistorySearchType),
-    };
+  showWarningNoViewOrganisationChosen(){
+    return !this.queryParamService.activeViewOrganisationId && this.organisationService.viewOrganisationsCount() > 0;
+  }
 
-    (Object.keys(searchAttributes) as (keyof typeof searchAttributes)[]).forEach((key) => {
-      if (typeof searchAttributes[key] === 'string' && searchAttributes[key].length == 0) {
-        searchAttributes[key] = undefined;
-      }
-    });
+  searchExtended() {
+
+    const extendedSearchDTO: ExtendedSearchDTO = {
+      elements: this.searchElements,
+      activeOnly: !this.includeInactive,
+      evalDate: this.defaultEvalDate,
+    }
 
     this._isLoading.next(true);
 
     this.searchService
-      .searchPerson(searchAttributes)
+      .searchPersonExtended(extendedSearchDTO)
       .subscribe({
         next: (it) => {
           this.results = it.result?.items;
@@ -199,7 +186,7 @@ export class SearchComponent {
     const fullTextSearchAttributes: FullTextSearchAttributes = {
       fullTextSearch: this.searchValue.simpleSearch.trim(),
       activeOnly: !this.includeInactive,
-      evalDate: getValidFromAsUTCString(this.selectedHistoryDate, this.selectedHistorySearchType),
+      evalDate: this.defaultEvalDate,
     };
 
     (Object.keys(fullTextSearchAttributes) as (keyof typeof fullTextSearchAttributes)[]).forEach((key) => {
@@ -229,7 +216,6 @@ export class SearchComponent {
 
   clear() {
     this.results = undefined;
-    this.showSearchDescription = true;
     this.handleWarning('');
   }
 

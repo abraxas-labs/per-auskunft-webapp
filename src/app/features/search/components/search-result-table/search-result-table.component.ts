@@ -9,16 +9,14 @@ import {
 } from '@abraxas/base-components';
 import { DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { MaskedPipe } from '../../../../shared/pipes/masked.pipe';
-import { mapMasked, MaskedValue, valueOr } from '../../../../core/utils/types';
+import { mapMasked, MaskedValue } from '../../../../core/utils/types';
 import {
   dataLockToIcon,
   getTodayAsUTCString,
-  getValidFromAsUTCString,
   sexCodeToIcon,
 } from '../../../../core/utils/commons';
 import { PersonSearchResult } from '../../models/models';
 import { CustomRoutingService } from '../../../../shared/services/custom-routing.service';
-import { DialogData } from '../../../common/components/history-selector/history-selector.component';
 import { saveAs as fileSaver } from 'file-saver';
 import { asBlob, generateCsv, mkConfig } from 'export-to-csv';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -28,15 +26,15 @@ export enum TableColumn {
   PER_ID = 'perId',
   DATA_LOCK_ICON = 'dataLockIcon',
   SEX_ICON = 'sexIcon',
-  NAME = 'name',
-  CALL_NAME = 'callName',
+  OFFICIAL_NAME = 'officialName',
+  FIRST_NAME = 'firstName',
   ALLIANCE_NAME = 'allianceName',
   DATE_OF_BIRTH = 'dateOfBirth',
-  REPORTING_MUNICIPALITY_WITH_CANTON_ABBREVIATION = 'reportingMunicipalityWithCantonAbbreviation',
   STREET = 'street',
   HOUSE_NUMBER = 'houseNumber',
   ZIP_CODE = 'zipCode',
   TOWN = 'town',
+  REPORTING_MUNICIPALITY = 'reportingMunicipality',
   RESIDENCES = 'residences',
   PERSON_STATUS = 'personStatus',
   PERSON_EVAL_DATE = 'personEvalDate',
@@ -46,15 +44,15 @@ type SearchResultRow = {
   [TableColumn.DATA_LOCK_ICON]: string;
   [TableColumn.SEX_ICON]: string;
   [TableColumn.PER_ID]: string;
-  [TableColumn.CALL_NAME]: string;
-  [TableColumn.NAME]: string;
+  [TableColumn.OFFICIAL_NAME]: string;
+  [TableColumn.FIRST_NAME]: string;
   [TableColumn.ALLIANCE_NAME]: string;
   [TableColumn.DATE_OF_BIRTH]: string;
-  [TableColumn.REPORTING_MUNICIPALITY_WITH_CANTON_ABBREVIATION]: string;
   [TableColumn.STREET]: string;
   [TableColumn.HOUSE_NUMBER]: string;
   [TableColumn.ZIP_CODE]: string;
   [TableColumn.TOWN]: string;
+  [TableColumn.REPORTING_MUNICIPALITY]: string;
   [TableColumn.RESIDENCES]: any[];
   [TableColumn.PERSON_STATUS]: string;
   [TableColumn.PERSON_EVAL_DATE]: string;
@@ -81,22 +79,20 @@ type SearchResultRow = {
 export class SearchResultTableComponent implements OnChanges, OnInit {
   @Input()
   data: PersonSearchResult[] = [];
-  @Input()
-  historySelector: DialogData | undefined;
 
   public columns = TableColumn;
   public columnsToDisplay: string[] = [
     TableColumn.DATA_LOCK_ICON,
     TableColumn.SEX_ICON,
-    TableColumn.NAME,
-    TableColumn.CALL_NAME,
+    TableColumn.OFFICIAL_NAME,
+    TableColumn.FIRST_NAME,
     TableColumn.ALLIANCE_NAME,
     TableColumn.DATE_OF_BIRTH,
-    TableColumn.REPORTING_MUNICIPALITY_WITH_CANTON_ABBREVIATION,
     TableColumn.STREET,
     TableColumn.HOUSE_NUMBER,
     TableColumn.ZIP_CODE,
     TableColumn.TOWN,
+    TableColumn.REPORTING_MUNICIPALITY,
     TableColumn.RESIDENCES,
   ];
 
@@ -144,29 +140,10 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
     return 'active';
   }
 
-  public formatInactiveResidences(personStatus: string): 'dark' | 'light' {
-    if (personStatus === 'active') {
-      return 'dark';
-    }
-    return 'light';
-  }
-
   onDetailClicked(row: any) {
-    if (row[TableColumn.PERSON_EVAL_DATE]) {
-      this.customRouting.openInNewTab('person/' + row[TableColumn.PER_ID] + '/' + row[TableColumn.PERSON_EVAL_DATE]);
-    } else if (this.historySelector?.selectedHistoryDate && this.historySelector?.selectedHistorySearchType) {
-      this.customRouting.openInNewTab(
-        'person/' +
-        row[TableColumn.PER_ID] +
-        '/' +
-        getValidFromAsUTCString(
-          this.historySelector?.selectedHistoryDate,
-          this.historySelector?.selectedHistorySearchType,
-        ),
-      );
-    } else {
-      this.customRouting.openInNewTab('person/' + row[TableColumn.PER_ID] + '/' + getTodayAsUTCString());
-    }
+    const evalDate = row[TableColumn.PERSON_EVAL_DATE] ?? getTodayAsUTCString();
+
+    this.customRouting.openInNewTab('person/' + row[TableColumn.PER_ID] + '/' + evalDate);
   }
 
   downloadFile() {
@@ -186,12 +163,12 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
           displayLabel: this.translate.instant('search.search-table.export.column.gender'),
         },
         {
-          key: TableColumn.NAME,
-          displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.NAME),
+          key: TableColumn.OFFICIAL_NAME,
+          displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.OFFICIAL_NAME),
         },
         {
-          key: TableColumn.CALL_NAME,
-          displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.CALL_NAME),
+          key: TableColumn.FIRST_NAME,
+          displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.FIRST_NAME),
         },
         {
           key: TableColumn.ALLIANCE_NAME,
@@ -200,10 +177,6 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
         {
           key: TableColumn.DATE_OF_BIRTH,
           displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.DATE_OF_BIRTH),
-        },
-        {
-          key: TableColumn.REPORTING_MUNICIPALITY_WITH_CANTON_ABBREVIATION,
-          displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.REPORTING_MUNICIPALITY_WITH_CANTON_ABBREVIATION),
         },
         {
           key: TableColumn.STREET,
@@ -220,6 +193,10 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
         {
           key: TableColumn.TOWN,
           displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.TOWN),
+        },
+        {
+          key: TableColumn.REPORTING_MUNICIPALITY,
+          displayLabel: this.translate.instant('search.search-table.column-title.' + TableColumn.REPORTING_MUNICIPALITY),
         },
         {
           key: TableColumn.RESIDENCES,
@@ -257,7 +234,7 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
   }
 
   private exportSexIcon(iconName: string) {
-    if (iconName === 'mars' || iconName === 'venus' || iconName === 'transgender') {
+    if (iconName === 'mars' || iconName === 'venus' || iconName === 'question-circle-o') {
       return this.translate.instant('search.search-table.export.gender.' + iconName);
     }
     return iconName;
@@ -266,18 +243,13 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
   private toRow(result: PersonSearchResult): SearchResultRow {
     return {
       perId: result.perId,
-      callName: this.maskedPipe.transform(result.callName),
-      name: this.maskedPipe.transform(result.name),
+      officialName: this.maskedPipe.transform(result.officialName),
+      firstName: this.maskedPipe.transform(result.firstName),
       allianceName: this.maskedPipe.transform(result.allianceName),
       dateOfBirth: this.maskedPipe.transform(
         mapMasked(result.dateOfBirth, (it) => this.datePipe.transform(it, 'dd.MM.yyyy')!),
       ),
-      reportingMunicipalityWithCantonAbbreviation: this.maskedPipe.transform(
-        this.formatReportingMunicipalityNameWithCantonAbbreviation(
-          result.reportingMunicipalityName,
-          result.reportingMunicipalityCantonAbbreviation,
-        ),
-      ),
+      reportingMunicipality: this.maskedPipe.transform(result.reportingMunicipalityName),
       street: this.maskedPipe.transform(result.address.address.street),
       houseNumber: this.maskedPipe.transform(result.address.address.houseNumber),
       zipCode: this.maskedPipe.transform(result.address.address.swissZipCode),
@@ -306,21 +278,6 @@ export class SearchResultTableComponent implements OnChanges, OnInit {
         return it + '';
       })
       .sort();
-  }
-
-  private formatReportingMunicipalityNameWithCantonAbbreviation(
-    reportingMunicipalityName: MaskedValue<string>,
-    reportingMunicipalityCantonAbbreviation: MaskedValue<string>,
-  ): MaskedValue<string> {
-    if (reportingMunicipalityName.type === 'Masked' && reportingMunicipalityCantonAbbreviation.type === 'Masked') {
-      return { type: 'Masked' };
-    }
-
-    const cantonAbbreviation = valueOr(reportingMunicipalityCantonAbbreviation, '');
-    return {
-      type: 'Value',
-      value: `${valueOr(reportingMunicipalityName, '')} ${cantonAbbreviation == '' ? '' : cantonAbbreviation}`,
-    };
   }
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, ReplaySubject, Subject, switchMap } from 'rxjs';
+import { map, ReplaySubject, Subject, switchMap, timer } from 'rxjs';
 import { AuthorizationService } from '@abraxas/base-components';
 import { OrganisationService } from './organisation.service';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
@@ -28,7 +28,7 @@ export class QueryParams {
 export class QueryParameterService {
 
   public activeQueryParams: Subject<QueryParams> = new ReplaySubject(1);
-  public aViewOrganisationHasToBeChosen = false;
+  public activeViewOrganisationId: string | undefined;
 
   constructor(private readonly authorizationService: AuthorizationService,
               private readonly organisationService: OrganisationService) {
@@ -41,19 +41,21 @@ export class QueryParameterService {
         ))
       .subscribe(queryParams => {
 
-        this.aViewOrganisationHasToBeChosen = false;
+       if (!queryParams.viewOrganisationId && organisationService.viewOrganisationsCount() > 0){
+         // Wenn keine viewOrganisationId vorhanden ist, es gibt aber mehr als 0 viewOrganisations,
+         // so brechen wir hier ab, da wir ansonsten auf einen Fehler laufen.
+         return;
+       }
 
-        if (organisationService.viewOrganisationsCount()) {
-          // Sind mehrere ViewOrganisations vorhanden, so muss eine gewählt werden
-          // ansonsten wir auf einen Fehler laufen
-          if (queryParams.viewOrganisationId) {
-            this.activeQueryParams.next(queryParams);
-          } else {
-            this.aViewOrganisationHasToBeChosen = true;
-          }
-        } else {
+        // Wir müssen sicher sein, dass alle ViewOrganisations geladen sind
+        // Sonst werden die Permissions geladen, ohne dass vorher die ViewOrganisations geladen wurden
+        // Dann laufen wir auf einen Fehler
+        const source = timer(1000);
+        const subscribe = source.subscribe(() => {
+          this.activeViewOrganisationId = queryParams.viewOrganisationId;
           this.activeQueryParams.next(queryParams);
-        }
+          subscribe.unsubscribe();
+        });
       });
   }
 }

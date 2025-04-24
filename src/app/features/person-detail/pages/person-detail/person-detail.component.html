@@ -1,5 +1,5 @@
 <mat-toolbar
-  [ngClass]="{'header-container':isBigScreen(),'header-container-small':isSmallOrMediumScreen(),'inactive':!isActive,'locked':hasLock,'active':isActive}">
+  [ngClass]="{'header-container':isBigScreen(),'header-container-small':isSmallOrMediumScreen(),'inactive':!isActive,'addressLock':lockValue===1,'dataLock':lockValue===2,'active':isActive}">
   <div class='header-label'>{{ headerLabel }}</div>
   <div [ngSwitch]='personStatus()'>
     <div *ngSwitchCase='"inactive"'>
@@ -8,9 +8,15 @@
         <bc-status-label class='status-label' label='{{ personStatusTitle() }}'></bc-status-label>
       </div>
     </div>
-    <div *ngSwitchCase='"locked"'>
+    <div *ngSwitchCase='"addressLock"'>
       <div class='status-container'>
-        <bc-icon icon='lock' class='locked-icon'></bc-icon>
+        <bc-icon icon='lock' class='addressLock-icon'></bc-icon>
+        <bc-status-label class='status-label' label='{{ personStatusTitle() }}'></bc-status-label>
+      </div>
+    </div>
+    <div *ngSwitchCase='"dataLock"'>
+      <div class='status-container'>
+        <bc-icon icon='lock' class='dataLock-icon'></bc-icon>
         <bc-status-label class='status-label' label='{{ personStatusTitle() }}'></bc-status-label>
       </div>
     </div>
@@ -24,6 +30,7 @@
                [icon]="'calendar'"
                [variant]="'tertiary'"
                [color]="'primary'"
+               [disabled]="!historyPermission"
                (buttonClick)='openHistorySelector()'
     ></bc-button>
   </div>
@@ -99,17 +106,18 @@
           <p class='info-box-value'>{{ person.person.residencePermitData.entryDate | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.residencePermitCode' | translate }}</p>
           <p class='info-box-value'>{{ person.person.residencePermitData.residencePermitCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.residencePermitValidFrom' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.residencePermitData.residencePermitValidFrom | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.residencePermitValidTill' | translate }}</p>
-          <p class='info-box-value'>
-            {{ person.person.residencePermitData.residencePermitValidTill | masked }}
-          </p>
+          <p class='info-box-value'>{{ person.person.residencePermitData.residencePermitValidTill | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.countryOfNationality' | translate }}</p>
           <p class='info-box-value'>{{ person.person.nationalityData.country.countryNameShort | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.nationalityStatus' | translate }}</p>
           <p class='info-box-value'>{{ person.person.nationalityData.nationalityStatusCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.nationalityValidFrom' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.nationalityData.nationalityValidFrom | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.municipality' | translate }}</p>
-          <p
-            class='info-box-value'>{{ person.residenceInformationView.reportingOrganisationNameAndCanton | masked }}</p>
+          <p class='info-box-value'>{{ person.residenceInformationView.reportingOrganisationName | masked }}</p>
         </div>
       </div>
     </bc-skeleton>
@@ -124,12 +132,16 @@
           <p class='info-box-value'>{{ person.person.maritalInfo.maritalStatusCode | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.dateOfMartialStatus' | translate }}</p>
           <p class='info-box-value'>{{ person.person.maritalInfo.dateOfMaritalStatus | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.officialProofOfMaritalStatusYesNo' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.officialProofOfMaritalStatusYesNo | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.cancellationReasonCode' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.cancellationReasonCode | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.separation' | translate }}</p>
           <p class='info-box-value'>{{ person.person.maritalInfo.separationCode | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.separationValidFrom' | translate }}</p>
           <p class='info-box-value'>{{ person.person.maritalInfo.separationValidFrom | masked }}</p>
-          <p class='info-box-label'>{{ 'person-detail.labels.cancellationReasonCode' | translate }}</p>
-          <p class='info-box-value'>{{ person.person.maritalInfo.cancellationReasonCode | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.separationValidTill' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.maritalInfo.separationValidTill | masked }}</p>
         </div>
       </div>
     </bc-skeleton>
@@ -144,6 +156,10 @@
           <p class='info-box-value'>{{ person.person.birthData.nameOfFather | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.nameParent2' | translate }}</p>
           <p class='info-box-value'>{{ person.person.birthData.nameOfMother | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.officialProofOfNameParent1' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.officialProofOfNameFather | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.officialProofOfNameParent2' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.birthData.officialProofOfNameMother | masked }}</p>
         </div>
       </div>
     </bc-skeleton>
@@ -158,6 +174,8 @@
           <p class='info-box-value'>{{ person.person.additionalData.dateOfDeath | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.dateOfMissing' | translate }}</p>
           <p class='info-box-value'>{{ person.person.additionalData.dateOfMissing | masked }}</p>
+          <p class='info-box-label'>{{ 'person-detail.labels.placeOfDeath' | translate }}</p>
+          <p class='info-box-value'>{{ person.person.additionalData.placeOfDeath | masked }}</p>
           <p class='info-box-label'>{{ 'person-detail.labels.languageOfCorrespondence' | translate }}</p>
           <p class='info-box-value'>{{ person.person.additionalData.languageOfCorrespondence | masked }}</p>
           <p class='info-box-label'>
@@ -166,8 +184,6 @@
           <p class='info-box-value'>
             {{ person.person.additionalData.restrictedVotingAndElectionRightFederation | masked }}
           </p>
-          <p class='info-box-label'>{{ 'person-detail.labels.lock' | translate }}</p>
-          <p class='info-box-value'>{{ person.person.additionalData.lock | masked }}</p>
         </div>
       </div>
     </bc-skeleton>

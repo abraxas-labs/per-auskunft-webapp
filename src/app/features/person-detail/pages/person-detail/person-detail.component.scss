@@ -3,11 +3,15 @@
 @use '@abraxas/base-components/src/lib/styles/predefined/default.palette' as palette;
 
 $core: map.get(palette.$default-palette, "core");
-$signal: map.get(palette.$default-palette, "signal");
 $primary: map.get($core, "primary");
 $primary10: color.mix($primary, white, 10%);
-$locked: map.get($signal, "error");
-$inactive: map.get($signal, "warning");
+
+$secondary: map.get(palette.$default-palette, "secondary");
+$tertiary: map.get(palette.$default-palette, "tertiary");
+
+$red: map.get($secondary, "tone-16");
+$orange: map.get($secondary, "tone-11");
+$yellow: map.get($tertiary, "tone-11t");
 
 .header-container {
   display: grid;
@@ -55,6 +59,7 @@ $inactive: map.get($signal, "warning");
 .info-box-label {
   font-size: 80%;
   color: #7f7f7f;
+  white-space: pre-line;
 }
 
 .expansion-box {
@@ -96,19 +101,27 @@ $inactive: map.get($signal, "warning");
 }
 
 .inactive {
-  background: color.mix($inactive, white, 30%) !important;
+  background: color.mix($yellow, white, 34%) !important;
 }
 
-.locked {
-  background: color.mix($locked, white, 20%) !important;
+.addressLock {
+  background: color.mix($orange, white, 34%) !important;
+}
+
+.dataLock {
+  background: color.mix($red, white, 34%) !important;
 }
 
 .inactive-icon {
-  color: $inactive;
+  color: $yellow;
 }
 
-.locked-icon {
-  color: $locked;
+.addressLock-icon {
+  color: $orange;
+}
+
+.dataLock-icon {
+  color: $red;
 }
 
 .status-label {

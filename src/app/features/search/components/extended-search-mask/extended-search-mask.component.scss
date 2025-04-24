@@ -1,18 +1,3 @@
-.options-line {
-  display: flex;
-  flex-direction: row;
-  gap: 3em;
-  align-items: center;
-}
-
-.align-self-start {
-  align-self: flex-start;
-}
-
-.element-margin-top {
-  margin-top: 1em;
-}
-
 .form-line {
   display: flex;
   flex-direction: row;
@@ -39,6 +24,25 @@
   font-size: 110%;
 }
 
+.line-header-top{
+  margin-top: 1em;
+}
+.line-header-bottom{
+  margin-bottom: 0;
+}
+
+.vn-top{
+  margin-top: 0.3em;
+}
+
+.rm-top{
+  margin-top: 0.3em;
+}
+
+.hover-icon{
+  cursor:pointer ;
+}
+
 .flex-expander {
   flex-grow: 2;
 }
@@ -47,9 +51,8 @@
   min-width: 200px;
 }
 
-.search-element {
-  row-gap: 0.1em;
-  margin-bottom: 0.1em;
+.button-top {
+  margin-top: 0.2em;
 }
 
 .flex-row {
@@ -57,7 +60,3 @@
   flex-direction: row;
   gap: 20px
 }
-
-
-
-

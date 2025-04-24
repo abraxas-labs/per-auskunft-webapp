@@ -1,11 +1,3 @@
-@use 'sass:map';
-@use 'sass:color';
-@use '@abraxas/base-components/src/lib/styles/predefined/default.palette' as palette;
-
-$signal: map.get(palette.$default-palette, "signal");
-$locked: map.get($signal, "error");
-$locked10: color.mix($locked, white, 60%);
-
 .table-header {
   display: flex;
   justify-content: space-between;
@@ -26,9 +18,13 @@ $locked10: color.mix($locked, white, 60%);
 }
 
 .inactive {
-  color: darkgrey;
+  color: #c1c3cf;
 }
 
 .locked {
-  color: $locked10;
+  color: #ea8798;
+}
+
+.clickable-row {
+  cursor: pointer;
 }

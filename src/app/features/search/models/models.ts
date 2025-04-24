@@ -1,22 +1,6 @@
 import { MaskedValue } from '../../../core/utils/types';
 import { MaskedDwellingAddressV2 } from '../../../core/models/models';
 
-export interface SearchAttributes {
-  name: any;
-  firstName: any;
-  allianceName: any;
-  dateOfBirth: any;
-  street: any;
-  houseNumber: any;
-  zipCode: any;
-  town: any;
-  reportingMunicipalityCode: any;
-  vn: any;
-  id: any;
-  activeOnly: boolean;
-  evalDate: any;
-}
-
 export interface FullTextSearchAttributes {
   fullTextSearch: any;
   activeOnly: boolean;
@@ -39,8 +23,8 @@ export type Page<T> = {
 export type PersonSearchResult = {
   perId: string;
   sexCode: MaskedValue<string>;
-  callName: MaskedValue<string>;
-  name: MaskedValue<string>;
+  officialName: MaskedValue<string>;
+  firstName: MaskedValue<string>;
   allianceName: MaskedValue<string>;
   dateOfBirth: MaskedValue<string>;
   address: MaskedDwellingAddressV2;
@@ -51,3 +35,15 @@ export type PersonSearchResult = {
   personEvalDate: string;
   hasLock: MaskedValue<boolean>;
 };
+
+export class ExtendedSearchDTO {
+  activeOnly!: boolean;
+  evalDate!: any;
+  elements!: SearchElementDTO[]
+}
+
+export class SearchElementDTO {
+  searchField!: string;
+  operator! :string;
+  values!:string[];
+}

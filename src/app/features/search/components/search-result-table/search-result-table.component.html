@@ -22,19 +22,19 @@
                 <div class="residence-wrapper" *ngSwitchCase="'1'">
                   <bc-status-label
                     label="{{ 'search.search-table.residence-short.mainResidenceShort' | translate }}"
-                    [backgroundColor]="'#e8f0fa'" [foregroundColor] = "formatInactiveResidences(row[columns.PERSON_STATUS])">
+                    [backgroundColor]="'#e8f0fa'">
                   </bc-status-label>
                 </div>
                 <div class="residence-wrapper" *ngSwitchCase="'2'">
                   <bc-status-label
                     label="{{ 'search.search-table.residence-short.secondaryResidenceShort' | translate }}"
-                    [backgroundColor]="'#fff1cc'" [foregroundColor] = "formatInactiveResidences(row[columns.PERSON_STATUS])">
+                    [backgroundColor]="'#fff1cc'">
                   </bc-status-label>
                 </div>
                 <div class="residence-wrapper" *ngSwitchCase="'3'">
                   <bc-status-label
                     label="{{ 'search.search-table.residence-short.otherResidenceShort' | translate }}"
-                    [backgroundColor]="'#e9e9e9'" [foregroundColor] = "formatInactiveResidences(row[columns.PERSON_STATUS])">
+                    [backgroundColor]="'#e9e9e9'">
                   </bc-status-label>
                 </div>
               </div>
@@ -46,5 +46,5 @@
     </bc-data-cell>
   </ng-container>
   <bc-header-row *headerRowDef="let row; columns: columnsToDisplay"></bc-header-row>
-  <bc-data-row *dataRowDef="let row; columns: columnsToDisplay" (click)="onDetailClicked(row)"></bc-data-row>
+  <bc-data-row class="clickable-row" *dataRowDef="let row; columns: columnsToDisplay" (click)="onDetailClicked(row)"></bc-data-row>
 </bc-table>

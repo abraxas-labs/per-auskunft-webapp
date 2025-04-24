@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import {FullTextSearchAttributes, SearchAttributes, SearchResult} from '../models/models';
+import { ExtendedSearchDTO, FullTextSearchAttributes, SearchResult } from '../models/models';
 import { QueryParameterService, QueryParams } from '../../../core/services/query-parameter.service';
 
 @Injectable({
@@ -15,13 +15,13 @@ export class PersonSearchService {
     private readonly queryParamService: QueryParameterService) {
   }
 
-  public searchPerson(searchObj: SearchAttributes): Observable<SearchResult> {
+  public searchPersonExtended(searchObj: ExtendedSearchDTO): Observable<SearchResult> {
     return this.queryParamService.activeQueryParams
-      .pipe(switchMap((params) => this.doSearchPerson(searchObj, params)));
+      .pipe(switchMap((params) => this.doSearchPersonExtended(searchObj, params)));
   }
 
-  private doSearchPerson(searchObj: SearchAttributes, params: QueryParams): Observable<SearchResult> {
-    const url = `${environment.apiBaseUrl}/auskunft/natPerson/search`;
+  private doSearchPersonExtended(searchObj: ExtendedSearchDTO, params: QueryParams): Observable<SearchResult> {
+    const url = `${environment.apiBaseUrl}/auskunft/natPerson/extendedSearch`;
     return this.httpClient.post<SearchResult>(url, searchObj, {params: params.toHttpParams()});
   }
 

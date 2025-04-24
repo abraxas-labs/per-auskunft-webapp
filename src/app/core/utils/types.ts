@@ -40,3 +40,21 @@ export function concatTwoMaskedValues<T1, T2>(a: MaskedValue<T1>, b: MaskedValue
   }
   return {type: 'Value', value: `${a.value ?? ''}${delimiter}${b.value ?? ''}`};
 }
+
+/**
+ * Sollte a oder b Masked oder undefined sein, wird nur das value des vorhandenen zurückgegeben.
+ * Ansonsten wird der Delimeter zwischen die values gelegt und diese als gesamtes zurückgegeben.
+ */
+export function concatAndReduceTwoMaskedValues<T1, T2>(a: MaskedValue<T1>, b: MaskedValue<T2>, delimiter: string): MaskedValue<string> {
+  if (a.type === 'Masked' && b.type === 'Masked') {
+    return masked();
+  } else if (a.type === 'Value' && a.value && (b.type === 'Masked' || !b.value)) {
+    return value(a.value + '');
+  } else if (b.type === 'Value' && b.value && (a.type === 'Masked' || !a.value)) {
+    return value(b.value + '');
+  } else if (a.type === 'Value' && a.value && b.type === 'Value' && b.value) {
+    return {type: 'Value', value: `${a.value ?? ''}${delimiter}${b.value ?? ''}`};
+  } else {
+    return {type: 'Value'};
+  }
+}

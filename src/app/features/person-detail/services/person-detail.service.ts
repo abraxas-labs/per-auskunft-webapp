@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  map,
-  Observable,
-  switchMap
-} from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  concatAndReduceTwoMaskedValues,
   concatMaskedValues,
   concatTwoMaskedValues,
   mapMasked,
@@ -43,18 +40,11 @@ import { dataLockToIcon, sexCodeToIcon } from '../../../core/utils/commons';
 import { MaskedDwellingAddressV2 } from '../../../core/models/models';
 import { QueryParameterService, QueryParams } from '../../../core/services/query-parameter.service';
 
-export enum languageOfCorrespondenceCodes {
-  de,
-  fr,
-  it,
-  rm,
-  en
-}
-
 @Injectable({
   providedIn: 'root',
 })
 export class PersonDetailService {
+  private languagesShort: string[] = [];
 
   constructor(
     private readonly httpClient: HttpClient,
@@ -63,6 +53,9 @@ export class PersonDetailService {
     private readonly maskedPipe: MaskedPipe,
     private readonly translate: TranslateService,
   ) {
+    this.translate.getTranslation(this.translate.currentLang).subscribe(translations => {
+      this.languagesShort = Object.keys(translations['person-detail']?.languageOfCorrespondence || {});
+    });
   }
 
   public loadPersonWithDate(id: string, validFrom: string): Observable<PersonWithRelationsViewModel> {
@@ -92,15 +85,10 @@ export class PersonDetailService {
       secondaryResidenceHouseholdMembers: dto.secondaryResidenceHouseholdMembers.flat(1),
       residenceInformationView: {
         ...dto.residenceInformationMasked,
-        reportingOrganisationNameAndCanton: concatMaskedValues(
-          ' ',
-          dto.residenceInformationMasked.reportingOrganisationName,
-          dto.residenceInformationMasked.reportingOrganisationCantonAbbreviation,
-        ),
       },
       personStatus: dto.personStatus,
       personEvalDate: dto.personEvalDate,
-      hasLock: dto.hasLock,
+      lockValue: dto.lockValue,
     };
   }
 
@@ -117,7 +105,15 @@ export class PersonDetailService {
         placeOfBirth: this.toGeneralPlaceViewModel(dto.person.birthData.placeOfBirth),
         sexCode: this.translateCode('sex', dto.person.birthData.sexCode),
         nameOfFather: this.formatNameOfParent(dto.person.birthData.nameOfFather),
+        officialProofOfNameFather: this.translateBool(
+          'person-detail.officialProofOfNameOfParentsBoolean.',
+          dto.person.birthData.nameOfFather.officialProofOfNameOfParentsYesNo,
+        ),
         nameOfMother: this.formatNameOfParent(dto.person.birthData.nameOfMother),
+        officialProofOfNameMother: this.translateBool(
+          'person-detail.officialProofOfNameOfParentsBoolean.',
+          dto.person.birthData.nameOfMother.officialProofOfNameOfParentsYesNo,
+        ),
       },
       nameData: {
         ...dto.person.nameData,
@@ -143,23 +139,27 @@ export class PersonDetailService {
       },
       residencePermitData: {
         ...dto.person.residencePermitData,
+        residencePermitValidFrom: this.formatDate(dto.person.residencePermitData.residencePermitValidFrom),
         residencePermitValidTill: this.formatDate(dto.person.residencePermitData.residencePermitValidTill),
         entryDate: this.formatDate(dto.person.residencePermitData.entryDate),
         residencePermitCode: this.translateCode(
           'residencePermit',
-          dto.person.residencePermitData.residencePermitCode,
-        ),
+          dto.person.residencePermitData.residencePermitCode),
       },
       nationalityData: {
         ...dto.person.nationalityData,
         nationalityStatusCode: this.translateCode(
           'nationalityStatus',
-          dto.person.nationalityData.nationalityStatusCode,
-        ),
+          dto.person.nationalityData.nationalityStatusCode),
+        nationalityValidFrom: this.formatDate(dto.person.nationalityData.nationalityValidFrom),
       },
       maritalInfo: {
         maritalStatusCode: this.translateCode('maritalStatus', dto.person.maritalInfo.maritalStatusCode),
         dateOfMaritalStatus: this.formatDate(dto.person.maritalInfo.dateOfMaritalStatus),
+        officialProofOfMaritalStatusYesNo: this.translateBool(
+          'person-detail.officialProofOfMaritalStatusBoolean.',
+          dto.person.maritalInfo.officialProofOfMaritalStatusYesNo,
+        ),
         cancellationReasonCode: this.translateCode(
           'cancellationReason',
           dto.person.maritalInfo.cancellationReasonCode,
@@ -169,6 +169,7 @@ export class PersonDetailService {
           dto.person.maritalInfo.separationData.separationCode,
         ),
         separationValidFrom: this.formatDate(dto.person.maritalInfo.separationData.validFrom),
+        separationValidTill: this.formatDate(dto.person.maritalInfo.separationData.validTill),
       },
       deathData: {
         ...dto.person.deathData,
@@ -440,6 +441,7 @@ export class PersonDetailService {
   ): AdditionalDataViewModel {
     let dateOfDeath: MaskedValue<string>;
     let dateOfMissing: MaskedValue<string>;
+
     if (deathData.missing.type === 'Masked') {
       dateOfMissing = masked();
       dateOfDeath = this.formatDate(deathData.deathPeriodFrom);
@@ -454,6 +456,7 @@ export class PersonDetailService {
     return {
       dateOfDeath,
       dateOfMissing,
+      placeOfDeath: this.formatPlaceOfDeath(deathData.placeOfDeath),
       languageOfCorrespondence: this.formatLanguageOfCorrespondence(personAddonData.languageOfCorrespondance),
       restrictedVotingAndElectionRightFederation: this.translateBool(
         'person-detail.restrictedVotingAndElectionRightFederationBoolean.',
@@ -466,7 +469,7 @@ export class PersonDetailService {
   private formatLanguageOfCorrespondence(languageOfCorrespondenceShort: MaskedValue<string>): MaskedValue<string> {
     return (languageOfCorrespondenceShort?.type === 'Value' &&
       languageOfCorrespondenceShort.value !== undefined &&
-      languageOfCorrespondenceCodes.hasOwnProperty(languageOfCorrespondenceShort.value.toLowerCase())) ?
+      this.languagesShort.includes(languageOfCorrespondenceShort.value.toLowerCase())) ?
       mapMasked(languageOfCorrespondenceShort,
         (it) => this.translate.instant('person-detail.languageOfCorrespondence.' + it.toLowerCase())) :
       languageOfCorrespondenceShort;
@@ -516,5 +519,27 @@ export class PersonDetailService {
       return [this.maskedPipe.transform(maskedList[0])];
     }
     return maskedList.filter(it => (it.type === 'Value' && it.value !== undefined)).map(it => this.maskedPipe.transform(it));
+  }
+
+  private formatPlaceOfDeath(dto: MaskedGeneralPlace): MaskedValue<string> {
+    if (dto.unknown.type === 'Value' && dto.unknown.value) {
+      return value(this.translate.instant('general.unknown'));
+    }
+
+    if ((dto.swissTown.municipalityName.type === 'Value' &&
+        dto.swissTown.municipalityName.value) ||
+      (dto.swissTown.cantonAbbreviation.type === 'Value' &&
+        dto.swissTown.cantonAbbreviation.value)) {
+
+      return concatAndReduceTwoMaskedValues(dto.swissTown.municipalityName, dto.swissTown.cantonAbbreviation, ' ');
+    }
+
+    if (dto.foreignCountry.town.type === 'Value' ||
+      dto.foreignCountry.country.countryNameShort.type === 'Value') {
+
+      return concatAndReduceTwoMaskedValues(dto.foreignCountry.town, dto.foreignCountry.country.countryNameShort, ', ');
+    }
+
+    return masked();
   }
 }

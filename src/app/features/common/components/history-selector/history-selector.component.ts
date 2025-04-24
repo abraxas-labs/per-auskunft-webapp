@@ -1,18 +1,20 @@
-import {AfterContentChecked, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { ButtonModule, DateModule, DialogModule, RadioButton, RadioButtonModule } from '@abraxas/base-components';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgIf } from '@angular/common';
-
-export interface DialogData {
-  selectedHistorySearchType: string;
-  selectedHistoryDate: Date;
-}
-
-export enum HistorySearchType {
-  CURRENT_DATE = 'CURRENT_DATE',
-  QUALIFYING_DATE = 'QUALIFYING_DATE'
-}
+import {
+  getEvalDateAsUTCString,
+  getTodayAsUTCString, isUTCDateStringToday,
+} from '../../../../core/utils/commons';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-history-selector',
@@ -26,40 +28,70 @@ export enum HistorySearchType {
     DateModule,
     ButtonModule,
     MatDialogClose,
-    NgIf,
+    ReactiveFormsModule,
   ],
 })
 
-export class HistorySelectorComponent implements OnInit, AfterContentChecked {
+export class HistorySelectorComponent {
 
-  public historySelector: any | undefined;
-  protected readonly HistorySearchType = HistorySearchType;
+  public form: FormGroup;
 
-  public radiogroup: RadioButton[] = [
-    {displayText: '', value: HistorySearchType.CURRENT_DATE, disabled: false},
-    {displayText: '', value: HistorySearchType.QUALIFYING_DATE, disabled: false}
+  public radioGroup: RadioButton[] = [
+    {displayText: '', value: 'current', disabled: false},
+    {displayText: '', value: 'otherDate', disabled: false}
   ];
-
 
   constructor(
     private readonly translate: TranslateService,
-    private readonly changeDetector: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+    private readonly dialogRef: MatDialogRef<HistorySelectorComponent>,
+    private readonly formBuilder: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public initialDate: Date) {
 
-    this.historySelector = data;
+    this.radioGroup[0].displayText = this.translate.instant('person-detail.historySearchTypes.currentDate');
+    this.radioGroup[1].displayText = this.translate.instant('person-detail.historySearchTypes.qualifyingDate');
+
+    const initialDateAsString = getEvalDateAsUTCString(this.initialDate);
+    const isInitialToday = isUTCDateStringToday(initialDateAsString);
+
+    this.form = this.formBuilder.group({
+      dateType: new FormControl(isInitialToday ? 'current' : 'otherDate'),
+      selectedDate: new FormControl(
+        {value: initialDateAsString, disabled: isInitialToday},
+        { validators: Validators.required, updateOn: 'change' }
+      ),
+    }, {
+      validators: this.validateForm
+    });
+
+    this.form.get('dateType')?.valueChanges.subscribe(value => {
+      if (value === 'current') {
+        this.form?.get('selectedDate')?.disable();
+      } else {
+        this.form?.get('selectedDate')?.enable();
+      }
+    });
   }
 
-  ngOnInit(): void {
-
-    this.translate.get(['person-detail.historySearchTypes.currentDate', 'person-detail.historySearchTypes.qualifyingDate'])
-      .subscribe(translations => {
-        this.radiogroup[0].displayText = translations['person-detail.historySearchTypes.currentDate'];
-        this.radiogroup[1].displayText = translations['person-detail.historySearchTypes.qualifyingDate'];
+  onSubmit(): void {
+    this.form.updateValueAndValidity();
+    if (this.form.valid) {
+      this.dialogRef.close({
+        selectedDate: this.form.value.dateType === 'current' ? new Date() : this.form.value.selectedDate
       });
-
+    }
   }
 
-  ngAfterContentChecked(): void {
-    this.changeDetector.detectChanges();
+  private validateForm(control: AbstractControl): ValidationErrors | null {
+    const date = control.get('selectedDate')?.value;
+
+    if (!date) {
+      return {'dateCheck': 'no date selected'};
+    }
+
+    if (getTodayAsUTCString() < date) {
+      return {'dateCheck': `date ${date} can not be in the future`}
+    }
+
+    return null;
   }
 }

@@ -9,6 +9,7 @@ import { QueryParameterService, QueryParams } from './query-parameter.service';
 export type Permission = {
   accessToInactiveResidents: boolean;
   historicValues: boolean;
+  fullHistoricPermission: boolean;
   searchExport: boolean;
 };
 

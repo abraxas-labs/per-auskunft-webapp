@@ -12,15 +12,13 @@ import {
   StatusLabelModule,
 } from '@abraxas/base-components';
 import {
-  DialogData,
-  HistorySearchType,
   HistorySelectorComponent,
 } from '../../../common/components/history-selector/history-selector.component';
 import {
   findTechnicalErrorMessage,
   getDateAsString,
   getDateFromUTCString,
-  getValidFromAsUTCString,
+  getEvalDateAsUTCString,
   isUTCDateStringToday,
 } from '../../../../core/utils/commons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -33,6 +31,7 @@ import { ResidencesTableComponent } from '../../components/residences/residences
 import { FamilyTableComponent } from '../../components/family-table/family-table.component';
 import { GuardianshipTableComponent } from '../../components/guardianship/guardianship-table.component';
 import { HouseholdTableComponent } from '../../components/household-table/household-table.component';
+import { PermissionService } from '../../../../core/services/permission.service';
 
 @Component({
   selector: 'app-person-detail',
@@ -66,13 +65,12 @@ export class PersonDetailComponent implements OnInit, OnDestroy {
   public person?: PersonWithRelationsViewModel;
   public isLoading: boolean = false;
   public isActive: boolean = true;
-  public hasLock: boolean = false;
+  public lockValue: number = 0;
+  public historyPermission: boolean = false;
 
   public headerLabel: string = '';
 
-  public historySelector: DialogData | undefined;
   private selectedHistoryDate: Date = new Date();
-  private selectedHistorySearchType: HistorySearchType = HistorySearchType.CURRENT_DATE;
 
   @Output()
   public afterClosed: EventEmitter<void> = new EventEmitter();
@@ -82,25 +80,20 @@ export class PersonDetailComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly personDetailService: PersonDetailService,
     private readonly dialogService: DialogService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService,
+    private readonly permissionService: PermissionService) {
 
     this.personId = this.route.snapshot.paramMap.get('id');
     this.evalDate = this.route.snapshot.paramMap.get('evalDate');
 
-    if (this.evalDate) {
-      // Wir übernehmen das Datum aus der Suche
-      if (isUTCDateStringToday(this.evalDate)) {
-        this.selectedHistorySearchType = HistorySearchType.CURRENT_DATE;
-      } else {
-        this.selectedHistorySearchType = HistorySearchType.QUALIFYING_DATE;
-      }
-      this.selectedHistoryDate = getDateFromUTCString(this.evalDate);
-    }
+    this.selectedHistoryDate = this.evalDate ? getDateFromUTCString(this.evalDate) : new Date();
 
-    this.historySelector = {
-      selectedHistorySearchType: this.selectedHistorySearchType,
-      selectedHistoryDate: this.selectedHistoryDate,
-    };
+
+    this.permissionService.permission().subscribe({
+      next: (it) => {
+        this.historyPermission = it.historicValues || it.fullHistoricPermission;
+      },
+    });
 
   }
 
@@ -114,12 +107,12 @@ export class PersonDetailComponent implements OnInit, OnDestroy {
 
     if (this.personId) {
       this.subscription = this.personDetailService
-        .loadPersonWithDate(this.personId, getValidFromAsUTCString(this.selectedHistoryDate, this.selectedHistorySearchType))
+        .loadPersonWithDate(this.personId, getEvalDateAsUTCString(this.selectedHistoryDate))
         .subscribe({
           next: (it) => {
             this.person = it;
             this.isActive = it.personStatus === 0;
-            this.hasLock = it.hasLock.type === 'Value' && (it.hasLock.value !== undefined && it.hasLock.value);
+            this.lockValue = (it.lockValue.type === 'Value' && it.lockValue.value !== undefined) ? it.lockValue.value : 0;
             // Es soll auf das korrekte Datum korrigiert werden, wenn die Person zu einem gewissen Stichtag
             // nicht ersichtlich ist.
             if (it.personEvalDate) this.selectedHistoryDate = getDateFromUTCString(it.personEvalDate);
@@ -166,7 +159,7 @@ export class PersonDetailComponent implements OnInit, OnDestroy {
   }
 
   getHistoryLabel(): string {
-    if (this.selectedHistorySearchType === HistorySearchType.CURRENT_DATE) {
+    if (isUTCDateStringToday(getEvalDateAsUTCString(this.selectedHistoryDate))) {
       return this.translate.instant('general.upToDate');
     } else {
       return getDateAsString(this.selectedHistoryDate);
@@ -177,42 +170,42 @@ export class PersonDetailComponent implements OnInit, OnDestroy {
     if (!this.isActive) {
       return this.translate.instant('person-detail.inactiveTitle').toUpperCase();
     }
-    if (this.hasLock) {
+    if (this.lockValue === 1) {
       if (this.isBigOrMediumScreen()) {
-        return this.translate.instant('person-detail.lockedTitle').toUpperCase();
+        return this.translate.instant('person-detail.addressLockTitle').toUpperCase();
       } else {
-        return this.translate.instant('person-detail.lockedTitleShort').toUpperCase();
+        return this.translate.instant('person-detail.addressLockTitleShort').toUpperCase();
+      }
+    } else if (this.lockValue === 2) {
+      if (this.isBigOrMediumScreen()) {
+        return this.translate.instant('person-detail.dataLockTitle').toUpperCase();
+      } else {
+        return this.translate.instant('person-detail.dataLockTitleShort').toUpperCase();
       }
     }
     return '';
   }
 
-  personStatus(): 'active' | 'inactive' | 'locked' {
+  personStatus(): 'active' | 'inactive' | 'dataLock' | 'addressLock' {
     if (!this.isActive) {
       return 'inactive';
     }
-    if (this.hasLock) {
-      return 'locked';
+    if (this.lockValue === 1) {
+      return 'addressLock'
+    } else if (this.lockValue === 2) {
+      return 'dataLock'
     }
     return 'active';
   }
 
   openHistorySelector() {
 
-    let dialogRef = this.dialogService.open(HistorySelectorComponent, this.historySelector);
+    let dialogRef = this.dialogService.open(HistorySelectorComponent, this.selectedHistoryDate);
     dialogRef.afterClosed().subscribe(historySelectorResult => {
-      if (historySelectorResult) {
+      if (historySelectorResult?.selectedDate) {
         // Komme hierher wenn OK gedrückt
-        this.historySelector = historySelectorResult;
-        this.selectedHistoryDate = historySelectorResult.selectedHistoryDate;
-        this.selectedHistorySearchType = historySelectorResult.selectedHistorySearchType;
+        this.selectedHistoryDate = historySelectorResult.selectedDate;
         this.loadPerson();
-      } else {
-        // Komme ich hier her, wenn ich abbrechen gedrückt habe alte Werte können wieder reingestellt werden
-        if (this.historySelector) {
-          this.historySelector.selectedHistoryDate = this.selectedHistoryDate;
-          this.historySelector.selectedHistorySearchType = this.selectedHistorySearchType;
-        }
       }
       this.afterClosed.emit();
     });
